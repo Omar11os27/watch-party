@@ -7,42 +7,43 @@ const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get('room');
 let isRemoteAction = false;
 
+// طلب الاسم
 let userName = localStorage.getItem("userName") || prompt("أدخل اسمك:") || "مستخدم";
 localStorage.setItem("userName", userName);
 
 if (!roomId) {
     roomId = Math.random().toString(36).substring(7);
-    let movieUrl = prompt("أدخل رابط الفيديو (سينمانا أو غيره):");
-    let subUrl = prompt("أدخل رابط ملف الترجمة (اختياري - .vtt أو .srt):");
+    let movieUrl = prompt("أدخل رابط الفيلم المباشر (m3u8 أو mp4):");
     if (!movieUrl) window.location.reload();
     window.history.pushState({}, '', `?room=${roomId}`);
-    socket.emit("join-room", { roomId, movieUrl, subUrl });
+    socket.emit("join-room", { roomId, movieUrl });
 } else {
     socket.emit("join-room", { roomId });
 }
 
-// وظيفة إضافة الترجمة للفيديو
-function addSubtitle(url) {
-    if (!url) return;
-    const track = document.createElement("track");
-    track.kind = "captions";
-    track.label = "العربية";
-    track.srclang = "ar";
-    track.src = url;
-    track.default = true;
-    video.appendChild(track);
+// استخدام مكتبة Hls.js لدعم الجودات والترجمة تلقائياً
+function initPlayer(url) {
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            console.log("تم تحميل الجودات والترجمة بنجاح");
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+    }
 }
 
 socket.on("sync-state", state => {
     if (state.movieUrl && video.src !== state.movieUrl) {
-        video.src = state.movieUrl;
-        if (state.subUrl) addSubtitle(state.subUrl);
+        initPlayer(state.movieUrl);
     }
     if (Math.abs(video.currentTime - state.time) > 2) video.currentTime = state.time;
     if (state.playing) video.play().catch(() => {});
 });
 
-// أحداث الفيديو
+// تزامن الأوامر
 video.onplay = () => { if (!isRemoteAction) socket.emit("play", { roomId, time: video.currentTime }); };
 video.onpause = () => { if (!isRemoteAction) socket.emit("pause", { roomId, time: video.currentTime }); };
 video.onseeked = () => { if (!isRemoteAction) socket.emit("seek", { roomId, time: video.currentTime }); };
@@ -51,7 +52,7 @@ socket.on("play", t => { isRemoteAction = true; video.currentTime = t; video.pla
 socket.on("pause", t => { isRemoteAction = true; video.pause(); setTimeout(() => isRemoteAction = false, 500); });
 socket.on("seek", t => { isRemoteAction = true; video.currentTime = t; setTimeout(() => isRemoteAction = false, 500); });
 
-// نظام الشات
+// الشات مع حل مشكلة الكيبورد
 function sendMessage() {
     const input = document.getElementById("msg");
     if (input.value.trim()) socket.emit("chat", { roomId, message: input.value, user: userName });
@@ -66,10 +67,10 @@ socket.on("chat", data => {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-// حل مشكلة الكيبورد في الموبايل
+// تثبيت الرؤية عند فتح الكيبورد
 if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    document.body.style.height = window.visualViewport.height + 'px';
-    window.scrollTo(0, 0);
-  });
+    window.visualViewport.addEventListener('resize', () => {
+        document.body.style.height = window.visualViewport.height + 'px';
+        window.scrollTo(0, 0);
+    });
 }
