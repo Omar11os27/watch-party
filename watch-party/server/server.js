@@ -16,33 +16,30 @@ io.on("connection", socket => {
     socket.emit("sync-state", rooms[roomId]);
   });
 
-  // التحكم الشامل: نرسل لكل الغرفة (io.to) مو بس للآخرين (socket.to)
   socket.on("play", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].playing = true;
-      rooms[roomId].time = time;
-      io.to(roomId).emit("play", time);
+      socket.to(roomId).emit("play", time);
     }
   });
 
   socket.on("pause", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].playing = false;
-      rooms[roomId].time = time;
-      io.to(roomId).emit("pause", time);
+      socket.to(roomId).emit("pause", time);
     }
   });
 
   socket.on("seek", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].time = time;
-      io.to(roomId).emit("seek", time);
+      socket.to(roomId).emit("seek", time);
     }
   });
 
-  socket.on("chat", ({ roomId, message }) => {
-    io.to(roomId).emit("chat", message);
+  socket.on("chat", (data) => {
+    io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
   });
 });
 
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 3000, () => console.log("Server Live!"));
