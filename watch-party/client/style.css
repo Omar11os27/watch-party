@@ -1,88 +1,59 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #0a0a0a;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #0f0f0f;
     color: white;
-    margin: 0;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0; padding: 10px;
+    display: flex; flex-direction: column; align-items: center;
 }
 
-h2 { margin: 10px 0; font-size: 1.5rem; }
+#status-msg {
+    position: fixed; top: 10px;
+    background: rgba(229, 9, 20, 0.9);
+    padding: 8px 15px; border-radius: 5px;
+    z-index: 1000; display: none;
+}
 
-/* حاوية الفيديو - تجعل الفيديو يملأ الشاشة في الموبايل */
 .video-container {
-    width: 95%;
-    max-width: 1000px;
-    background: black;
-    border-radius: 8px;
-    overflow: hidden;
+    width: 100%; max-width: 900px;
+    background: #000; border-radius: 10px;
+    overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-video {
-    width: 100%;
-    display: block;
-}
+video { width: 100%; display: block; }
 
-/* حاوية الشات */
 #chat {
-    width: 95%;
-    max-width: 1000px;
-    margin-top: 15px;
-    background: #141414;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    height: 300px; /* طول ثابت للشات */
+    width: 100%; max-width: 900px;
+    height: 300px; margin-top: 15px;
+    background: #1a1a1a; border-radius: 10px;
+    display: flex; flex-direction: column;
 }
 
 #messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    text-align: right;
+    flex: 1; overflow-y: auto;
+    padding: 10px; text-align: right;
 }
 
 .msg-item {
-    background: #2b2b2b;
-    padding: 8px 12px;
-    margin: 5px 0;
-    border-radius: 15px;
-    display: inline-block;
-    max-width: 80%;
-    word-wrap: break-word;
+    background: #333; padding: 8px 12px;
+    margin: 4px 0; border-radius: 10px;
+    display: inline-block; max-width: 85%;
 }
 
 .input-area {
-    display: flex;
-    padding: 10px;
-    gap: 5px;
-    background: #1f1f1f;
+    display: flex; padding: 10px; gap: 8px;
 }
 
 input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
-    border: none;
-    background: #333;
-    color: white;
-    outline: none;
+    flex: 1; padding: 10px; border-radius: 5px;
+    border: none; background: #262626; color: white;
 }
 
 button {
-    padding: 0 20px;
-    background: #e50914;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
+    background: #e50914; color: white; border: none;
+    padding: 0 20px; border-radius: 5px; cursor: pointer;
 }
 
-/* تعديلات للأجهزة اللوحية والموبايل */
-@media (max-width: 768px) {
-    #chat { height: 250px; }
+@media (max-width: 600px) {
+    #chat { height: 200px; }
     h2 { font-size: 1.2rem; }
 }

@@ -2,13 +2,15 @@ const SERVER_URL = "https://watch-party-v2gx.onrender.com";
 const socket = io(SERVER_URL);
 
 const video = document.getElementById("video");
+const statusMsg = document.getElementById("status-msg");
 const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get('room');
-let isRemoteAction = false; // لمنع حلقة التكرار بين الأجهزة
+let isRemoteAction = false;
 
+// إدارة الغرفة ورابط الفيلم
 if (!roomId) {
     roomId = Math.random().toString(36).substring(7);
-    let movieUrl = prompt("أدخل رابط الفيلم المباشر:");
+    let movieUrl = prompt("أدخل رابط الفيلم المباشر لبدء الغرفة:");
     if (!movieUrl) window.location.reload();
     window.history.pushState({}, '', `?room=${roomId}`);
     socket.emit("join-room", { roomId, movieUrl });
@@ -16,43 +18,59 @@ if (!roomId) {
     socket.emit("join-room", { roomId });
 }
 
+// استلام الحالة الابتدائية
 socket.on("sync-state", state => {
     if (state.movieUrl && video.src !== state.movieUrl) {
         video.src = state.movieUrl;
     }
-    // مزامنة الوقت فقط إذا كان الفرق كبير (أكثر من ثانيتين) لتجنب التقطيع
     if (Math.abs(video.currentTime - state.time) > 2) {
         video.currentTime = state.time;
     }
-    if (state.playing) video.play().catch(() => {});
 });
 
-// إرسال الأوامر مع حماية
+// التعامل مع ضعف النت
+video.onwaiting = () => {
+    if (!isRemoteAction) socket.emit("buffering", { roomId });
+};
+
+video.onplaying = () => {
+    if (!isRemoteAction) socket.emit("resume", { roomId });
+};
+
+socket.on("show-buffer", (msg) => {
+    isRemoteAction = true;
+    video.pause();
+    statusMsg.innerText = msg;
+    statusMsg.style.display = "block";
+});
+
+socket.on("hide-buffer", () => {
+    statusMsg.style.display = "none";
+    video.play().finally(() => isRemoteAction = false);
+});
+
+// أحداث الفيديو الأساسية
 video.onplay = () => {
-    if (isRemoteAction) return;
-    socket.emit("play", { roomId, time: video.currentTime });
+    if (!isRemoteAction) socket.emit("play", { roomId, time: video.currentTime });
 };
 
 video.onpause = () => {
-    if (isRemoteAction) return;
-    socket.emit("pause", { roomId, time: video.currentTime });
+    if (!isRemoteAction) socket.emit("pause", { roomId, time: video.currentTime });
 };
 
 video.onseeking = () => {
-    if (isRemoteAction) return;
-    socket.emit("seek", { roomId, time: video.currentTime });
+    if (!isRemoteAction) socket.emit("seek", { roomId, time: video.currentTime });
 };
 
-// استقبال الأوامر مع حماية
+// استقبال الأوامر
 socket.on("play", time => {
     isRemoteAction = true;
     video.currentTime = time;
-    video.play().then(() => isRemoteAction = false).catch(() => isRemoteAction = false);
+    video.play().finally(() => isRemoteAction = false);
 });
 
 socket.on("pause", time => {
     isRemoteAction = true;
-    video.currentTime = time;
     video.pause();
     setTimeout(() => isRemoteAction = false, 500);
 });
@@ -63,7 +81,7 @@ socket.on("seek", time => {
     setTimeout(() => isRemoteAction = false, 500);
 });
 
-// الشات
+// نظام الشات
 function sendMessage() {
     const input = document.getElementById("msg");
     if (!input.value) return;
