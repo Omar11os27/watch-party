@@ -1,27 +1,88 @@
-* { box-sizing: border-box; }
-body {
-    font-family: 'Segoe UI', sans-serif; background: #000; color: #fff;
-    margin: 0; padding: 0; display: flex; flex-direction: column;
-    position: fixed; width: 100%; height: 100%; overflow: hidden;
+/* منع الصفحة كاملة من التحرك عند ظهور الكيبورد */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* يمنع السكرول الخارجي */
+    position: fixed; /* يثبت المحتوى بمكانه */
 }
 
-.video-container { width: 100%; background: #000; flex-shrink: 0; border-bottom: 1px solid #333; }
-video { width: 100%; max-height: 40vh; display: block; }
-
-#chat { flex-grow: 1; display: flex; flex-direction: column; background: #0f0f0f; overflow: hidden; }
-#messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-
-.msg-item {
-    background: #222; padding: 10px; border-radius: 12px;
-    max-width: 85%; align-self: flex-start; border-right: 3px solid #e50914;
+body { 
+    font-family: sans-serif; 
+    background: #0a0a0a; 
+    color: #fff; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
 }
-.msg-item strong { color: #e50914; display: block; font-size: 0.8rem; margin-bottom: 2px; }
 
-.input-area {
-    padding: 10px; display: flex; gap: 8px; background: #1a1a1a;
-    border-top: 1px solid #333; padding-bottom: env(safe-area-inset-bottom);
+/* الفيديو يبقى ثابت فوق وما يتأثر بالكيبورد */
+.video-container { 
+    width: 100%; 
+    max-width: 850px; 
+    aspect-ratio: 16/9; 
+    background: #000; 
+    border-bottom: 1px solid #333; 
+    flex-shrink: 0; /* يمنع ضغط الفيديو عند ظهور الكيبورد */
 }
-input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid #444; background: #222; color: #fff; outline: none; }
-button { background: #e50914; color: #fff; border: none; padding: 0 20px; border-radius: 25px; font-weight: bold; }
 
-video::cue { background: rgba(0, 0, 0, 0.8); color: #fff; }
+video, #youtube-container { width: 100%; height: 100%; }
+
+/* الشات يأخذ المساحة المتبقية فقط */
+#chat { 
+    width: 100%; 
+    max-width: 850px; 
+    flex-grow: 1; /* يتمدد ليملأ الفراغ */
+    background: #141414; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden;
+}
+
+#messages { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 10px; 
+    text-align: right; 
+}
+
+.msg-item { 
+    background: #222; 
+    padding: 8px 12px; 
+    margin: 5px 0; 
+    border-radius: 8px; 
+    display: inline-block; 
+    max-width: 80%; 
+}
+
+.msg-item strong { color: #e50914; margin-left: 5px; font-size: 0.8rem; }
+
+/* منطقة الإدخال تبقى دائماً فوق الكيبورد */
+.input-area { 
+    display: flex; 
+    padding: 10px; 
+    gap: 5px; 
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    padding-bottom: env(safe-area-inset-bottom); /* لدعم فتحات الشاشة في الآيفون */
+}
+
+input { 
+    flex: 1; 
+    padding: 12px; 
+    border-radius: 5px; 
+    border: none; 
+    background: #262626; 
+    color: #fff; 
+    font-size: 16px; /* يمنع الزووم التلقائي في الآيفون عند الكتابة */
+}
+
+button { 
+    background: #e50914; 
+    color: #fff; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
