@@ -4,77 +4,81 @@ const socket = io(SERVER_URL);
 const video = document.getElementById("video");
 const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get('room');
-let movieUrl = "";
+let isRemoteAction = false; // لمنع حلقة التكرار بين الأجهزة
 
-// إذا ماكو ID غرفة بالرابط، نسوي واحد جديد ونطلب رابط الفيلم
 if (!roomId) {
     roomId = Math.random().toString(36).substring(7);
-    movieUrl = prompt("أدخل رابط ملف الفيلم (Direct Link):");
-    if (!movieUrl) {
-        alert("لازم تخلي رابط حتى تبدي الغرفة!");
-        window.location.reload();
-    }
+    let movieUrl = prompt("أدخل رابط الفيلم المباشر:");
+    if (!movieUrl) window.location.reload();
     window.history.pushState({}, '', `?room=${roomId}`);
-    alert("انسخ رابط المتصفح وادزه لأصدقائك حتى يشوفون وياك!");
+    socket.emit("join-room", { roomId, movieUrl });
+} else {
+    socket.emit("join-room", { roomId });
 }
 
-// الانضمام للغرفة
-socket.emit("join-room", { roomId, movieUrl });
-
 socket.on("sync-state", state => {
-    // تحديث رابط الفيلم إذا كان موجوداً
     if (state.movieUrl && video.src !== state.movieUrl) {
         video.src = state.movieUrl;
     }
-    video.currentTime = state.time;
-    if (state.playing) video.play();
+    // مزامنة الوقت فقط إذا كان الفرق كبير (أكثر من ثانيتين) لتجنب التقطيع
+    if (Math.abs(video.currentTime - state.time) > 2) {
+        video.currentTime = state.time;
+    }
+    if (state.playing) video.play().catch(() => {});
 });
 
-// الأحداث (Events)
-video.addEventListener("play", () => {
-  socket.emit("play", { roomId, time: video.currentTime });
-});
+// إرسال الأوامر مع حماية
+video.onplay = () => {
+    if (isRemoteAction) return;
+    socket.emit("play", { roomId, time: video.currentTime });
+};
 
-video.addEventListener("pause", () => {
-  socket.emit("pause", { roomId, time: video.currentTime });
-});
+video.onpause = () => {
+    if (isRemoteAction) return;
+    socket.emit("pause", { roomId, time: video.currentTime });
+};
 
-video.addEventListener("seeked", () => {
-  socket.emit("seek", { roomId, time: video.currentTime });
-});
+video.onseeking = () => {
+    if (isRemoteAction) return;
+    socket.emit("seek", { roomId, time: video.currentTime });
+};
 
+// استقبال الأوامر مع حماية
 socket.on("play", time => {
-  video.currentTime = time;
-  video.play();
+    isRemoteAction = true;
+    video.currentTime = time;
+    video.play().then(() => isRemoteAction = false).catch(() => isRemoteAction = false);
 });
 
 socket.on("pause", time => {
-  video.currentTime = time;
-  video.pause();
+    isRemoteAction = true;
+    video.currentTime = time;
+    video.pause();
+    setTimeout(() => isRemoteAction = false, 500);
 });
 
 socket.on("seek", time => {
-  video.currentTime = time;
+    isRemoteAction = true;
+    video.currentTime = time;
+    setTimeout(() => isRemoteAction = false, 500);
 });
 
-// ===== CHAT =====
-const messages = document.getElementById("messages");
+// الشات
 function sendMessage() {
-  const input = document.getElementById("msg");
-  if (!input.value) return;
-  socket.emit("chat", { roomId, message: input.value });
-  addMessage("أنت: " + input.value);
-  input.value = "";
+    const input = document.getElementById("msg");
+    if (!input.value) return;
+    socket.emit("chat", { roomId, message: input.value });
+    addMessage("أنت: " + input.value);
+    input.value = "";
 }
 
-socket.on("chat", msg => {
-  addMessage("صديقك: " + msg);
-});
+socket.on("chat", msg => addMessage("صديقك: " + msg));
 
 function addMessage(text) {
-  const div = document.createElement("div");
-  div.className = "msg-item";
-  div.textContent = text;
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+    const messages = document.getElementById("messages");
+    const div = document.createElement("div");
+    div.className = "msg-item";
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
 }

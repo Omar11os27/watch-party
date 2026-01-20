@@ -1,61 +1,88 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #0f0f0f;
-  color: white;
-  text-align: center;
-  margin: 0; padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: white;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 { margin: 10px 0; font-size: 1.5rem; }
+
+/* حاوية الفيديو - تجعل الفيديو يملأ الشاشة في الموبايل */
+.video-container {
+    width: 95%;
+    max-width: 1000px;
+    background: black;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 video {
-  border: 2px solid #333;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    width: 100%;
+    display: block;
 }
 
+/* حاوية الشات */
 #chat {
-  width: 80%;
-  max-width: 600px;
-  margin: 20px auto;
-  background: #1a1a1a;
-  padding: 15px;
-  border-radius: 10px;
+    width: 95%;
+    max-width: 1000px;
+    margin-top: 15px;
+    background: #141414;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 300px; /* طول ثابت للشات */
 }
 
 #messages {
-  height: 200px;
-  overflow-y: auto;
-  border-bottom: 1px solid #333;
-  margin-bottom: 10px;
-  padding: 10px;
-  text-align: right;
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    text-align: right;
 }
 
 .msg-item {
-  background: #262626;
-  padding: 5px 10px;
-  margin: 5px 0;
-  border-radius: 5px;
+    background: #2b2b2b;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 15px;
+    display: inline-block;
+    max-width: 80%;
+    word-wrap: break-word;
 }
 
 .input-area {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    padding: 10px;
+    gap: 5px;
+    background: #1f1f1f;
 }
 
 input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background: #333;
-  color: white;
+    flex: 1;
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    background: #333;
+    color: white;
+    outline: none;
 }
 
 button {
-  padding: 10px 20px;
-  background: #e50914;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 0 20px;
+    background: #e50914;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* تعديلات للأجهزة اللوحية والموبايل */
+@media (max-width: 768px) {
+    #chat { height: 250px; }
+    h2 { font-size: 1.2rem; }
 }

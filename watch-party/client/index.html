@@ -2,26 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>Watch Party - غرف مشاهدة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Party - موبايل وكمبيوتر</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>🎬 Watch Party</h2>
-<p style="font-size: 0.8em; color: #888;">شارك رابط الصفحة مع أصدقائك</p>
+  <h2>🎬 Watch Party</h2>
 
-<video id="video" controls width="80%">
-  </video>
-
-<div id="chat">
-  <div id="messages"></div>
-  <div class="input-area">
-    <input id="msg" placeholder="اكتب رسالة...">
-    <button onclick="sendMessage()">إرسال</button>
+  <div class="video-container">
+    <video id="video" controls playsinline></video>
   </div>
-</div>
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="client.js"></script>
+  <div id="chat">
+    <div id="messages"></div>
+    <div class="input-area">
+      <input id="msg" placeholder="اكتب رسالة...">
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="client.js"></script>
 </body>
 </html>
