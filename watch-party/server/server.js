@@ -16,33 +16,32 @@ io.on("connection", socket => {
     socket.emit("sync-state", rooms[roomId]);
   });
 
+  // التحكم الشامل: نرسل لكل الغرفة (io.to) مو بس للآخرين (socket.to)
   socket.on("play", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].playing = true;
-      socket.to(roomId).emit("play", time);
+      rooms[roomId].time = time;
+      io.to(roomId).emit("play", time);
     }
   });
 
   socket.on("pause", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].playing = false;
-      socket.to(roomId).emit("pause", time);
+      rooms[roomId].time = time;
+      io.to(roomId).emit("pause", time);
     }
   });
 
   socket.on("seek", ({ roomId, time }) => {
     if (rooms[roomId]) {
       rooms[roomId].time = time;
-      socket.to(roomId).emit("seek", time);
+      io.to(roomId).emit("seek", time);
     }
   });
 
-  // إرسال الرسالة مع اسم المستخدم للجميع
-  socket.on("chat", (data) => {
-    io.to(data.roomId).emit("chat", { 
-        user: data.user, 
-        message: data.message 
-    });
+  socket.on("chat", ({ roomId, message }) => {
+    io.to(roomId).emit("chat", message);
   });
 });
 
