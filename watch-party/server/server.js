@@ -5,48 +5,59 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
+app.get("/", (req, res) => {
+  res.send("Watch Party Server is Running...");
+});
+
 const io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
+  cors: { origin: "*" }
 });
 
 const rooms = {};
 
 io.on("connection", socket => {
-
-  socket.on("join-room", roomId => {
+  socket.on("join-room", ({ roomId, movieUrl }) => {
     socket.join(roomId);
 
+    // إذا الغرفة جديدة، نخزن الرابط اللي جابه أول واحد دخل
     if (!rooms[roomId]) {
       rooms[roomId] = {
         time: 0,
-        playing: false
+        playing: false,
+        movieUrl: movieUrl || "" 
       };
     }
 
+    // نرسل بيانات الغرفة (الرابط والوقت) للمستخدم الجديد
     socket.emit("sync-state", rooms[roomId]);
   });
 
   socket.on("play", ({ roomId, time }) => {
-    rooms[roomId] = { time, playing: true };
-    socket.to(roomId).emit("play", time);
+    if(rooms[roomId]) {
+        rooms[roomId].time = time;
+        rooms[roomId].playing = true;
+        socket.to(roomId).emit("play", time);
+    }
   });
 
   socket.on("pause", ({ roomId, time }) => {
-    rooms[roomId] = { time, playing: false };
-    socket.to(roomId).emit("pause", time);
+    if(rooms[roomId]) {
+        rooms[roomId].time = time;
+        rooms[roomId].playing = false;
+        socket.to(roomId).emit("pause", time);
+    }
   });
 
   socket.on("seek", ({ roomId, time }) => {
-    rooms[roomId].time = time;
-    socket.to(roomId).emit("seek", time);
+    if(rooms[roomId]) {
+        rooms[roomId].time = time;
+        socket.to(roomId).emit("seek", time);
+    }
   });
 
   socket.on("chat", ({ roomId, message }) => {
     socket.to(roomId).emit("chat", message);
   });
-
 });
 
 const PORT = process.env.PORT || 3000;
