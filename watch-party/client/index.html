@@ -2,24 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Watch Party Pro</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-    <h2>🎬 Watch Party Pro</h2>
     <div class="video-container">
         <video id="video" controls playsinline style="display:none;"></video>
         <div id="youtube-container" style="display:none;"></div>
     </div>
-    <div id="chat">
+
+    <div id="chat-wrapper">
         <div id="messages"></div>
         <div class="input-area">
-            <input id="msg" placeholder="اكتب رسالة...">
+            <input id="msg" placeholder="اكتب رسالة..." autocomplete="off">
             <button onclick="sendMessage()">إرسال</button>
         </div>
     </div>
+
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="client.js"></script>
 </body>
