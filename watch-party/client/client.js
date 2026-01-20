@@ -7,13 +7,14 @@ const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get('room');
 let isRemoteAction = false;
 
-// طلب الاسم
-let userName = localStorage.getItem("userName") || prompt("أدخل اسمك:") || "مستخدم";
+// طلب الاسم وحفظه
+let userName = localStorage.getItem("userName") || prompt("أدخل اسمك للمشاركة:") || "مستخدم";
 localStorage.setItem("userName", userName);
 
+// إعداد الغرفة
 if (!roomId) {
     roomId = Math.random().toString(36).substring(7);
-    let movieUrl = prompt("أدخل رابط الفيلم المباشر (m3u8 أو mp4):");
+    let movieUrl = prompt("أدخل رابط m3u8 من سينمانا (Network -> m3u8):");
     if (!movieUrl) window.location.reload();
     window.history.pushState({}, '', `?room=${roomId}`);
     socket.emit("join-room", { roomId, movieUrl });
@@ -21,15 +22,12 @@ if (!roomId) {
     socket.emit("join-room", { roomId });
 }
 
-// استخدام مكتبة Hls.js لدعم الجودات والترجمة تلقائياً
-function initPlayer(url) {
+// تشغيل روابط سينمانا والجودات تلقائياً
+function loadSource(url) {
     if (Hls.isSupported()) {
         const hls = new Hls();
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            console.log("تم تحميل الجودات والترجمة بنجاح");
-        });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
     }
@@ -37,13 +35,13 @@ function initPlayer(url) {
 
 socket.on("sync-state", state => {
     if (state.movieUrl && video.src !== state.movieUrl) {
-        initPlayer(state.movieUrl);
+        loadSource(state.movieUrl);
     }
     if (Math.abs(video.currentTime - state.time) > 2) video.currentTime = state.time;
     if (state.playing) video.play().catch(() => {});
 });
 
-// تزامن الأوامر
+// التزامن
 video.onplay = () => { if (!isRemoteAction) socket.emit("play", { roomId, time: video.currentTime }); };
 video.onpause = () => { if (!isRemoteAction) socket.emit("pause", { roomId, time: video.currentTime }); };
 video.onseeked = () => { if (!isRemoteAction) socket.emit("seek", { roomId, time: video.currentTime }); };
@@ -52,7 +50,7 @@ socket.on("play", t => { isRemoteAction = true; video.currentTime = t; video.pla
 socket.on("pause", t => { isRemoteAction = true; video.pause(); setTimeout(() => isRemoteAction = false, 500); });
 socket.on("seek", t => { isRemoteAction = true; video.currentTime = t; setTimeout(() => isRemoteAction = false, 500); });
 
-// الشات مع حل مشكلة الكيبورد
+// الشات
 function sendMessage() {
     const input = document.getElementById("msg");
     if (input.value.trim()) socket.emit("chat", { roomId, message: input.value, user: userName });
@@ -67,7 +65,7 @@ socket.on("chat", data => {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-// تثبيت الرؤية عند فتح الكيبورد
+// حل مشكلة الكيبورد بالموبايل
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
         document.body.style.height = window.visualViewport.height + 'px';
