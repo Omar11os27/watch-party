@@ -1,45 +1,24 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>Watch Party</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Watch Party</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="setup">
-  <div class="box">
-    <h2>🎬 Watch Party</h2>
-
-    <input id="name" placeholder="اسمك">
-
-    <div id="owner-fields">
-      <input id="movie" placeholder="رابط الفيديو">
-      <input type="file" id="sub" accept=".vtt,.srt">
-    </div>
-
-    <button onclick="start()">دخول</button>
-  </div>
+<div class="box">
+  <h2>اسمك</h2>
+  <input id="name" placeholder="اسمك">
+  <button onclick="saveName()">دخول</button>
 </div>
 
-<div id="app">
-  <div class="video-section">
-    <video id="player" class="video-js vjs-default-skin" controls></video>
-  </div>
-
-  <div class="chat-section">
-    <div id="messages"></div>
-    <form onsubmit="sendMsg(event)">
-      <input id="msg" placeholder="اكتب...">
-      <button>إرسال</button>
-    </form>
-  </div>
+<div class="box" id="rooms" style="display:none">
+  <h2>إنشاء غرفة</h2>
+  <input id="movie" placeholder="رابط الفيديو">
+  <button onclick="createRoom()">إنشاء</button>
 </div>
 
-<script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="client.js"></script>
+<script src="index.js"></script>
 </body>
 </html>

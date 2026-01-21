@@ -4,57 +4,47 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: "*" }
-});
+const io = new Server(server, { cors: { origin: "*" } });
 
-const rooms = {};
+const rooms = {}; 
+// roomId: { movieUrl, subContent, time, playing }
 
 io.on("connection", socket => {
 
-  socket.on("join-room", ({ roomId, name, movieUrl, subContent }) => {
+  socket.on("create-room", data => {
+    rooms[data.roomId] = {
+      movieUrl: data.movieUrl,
+      subContent: data.subContent,
+      time: 0,
+      playing: false
+    };
+  });
+
+  socket.on("join-room", roomId => {
     socket.join(roomId);
-
-    // أول شخص
-    if (!rooms[roomId]) {
-      rooms[roomId] = {
-        movieUrl,
-        subContent,
-        time: 0,
-        playing: false
-      };
-    }
-
     socket.emit("sync-state", rooms[roomId]);
-
-    socket.to(roomId).emit("system", `${name} انضم للحفلة`);
   });
 
-  socket.on("play", ({ roomId, time }) => {
-    if (!rooms[roomId]) return;
-    rooms[roomId].playing = true;
-    rooms[roomId].time = time;
-    socket.to(roomId).emit("play", time);
+  socket.on("play", d => {
+    rooms[d.roomId].playing = true;
+    rooms[d.roomId].time = d.time;
+    socket.to(d.roomId).emit("play", d.time);
   });
 
-  socket.on("pause", ({ roomId, time }) => {
-    if (!rooms[roomId]) return;
-    rooms[roomId].playing = false;
-    rooms[roomId].time = time;
-    socket.to(roomId).emit("pause", time);
+  socket.on("pause", d => {
+    rooms[d.roomId].playing = false;
+    rooms[d.roomId].time = d.time;
+    socket.to(d.roomId).emit("pause", d.time);
   });
 
-  socket.on("seek", ({ roomId, time }) => {
-    if (!rooms[roomId]) return;
-    rooms[roomId].time = time;
-    socket.to(roomId).emit("seek", time);
+  socket.on("seek", d => {
+    rooms[d.roomId].time = d.time;
+    socket.to(d.roomId).emit("seek", d.time);
   });
 
-  socket.on("chat", data => {
-    io.to(data.roomId).emit("chat", data);
+  socket.on("chat", d => {
+    io.to(d.roomId).emit("chat", d);
   });
 });
 
-server.listen(process.env.PORT || 3000, () =>
-  console.log("Server running")
-);
+server.listen(process.env.PORT || 3000);
