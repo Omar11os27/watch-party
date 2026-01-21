@@ -1,30 +1,205 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watch Room</title>
-  <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Party - مشاهدة متزامنة</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="app" class="app">
+        <!-- Username Modal -->
+        <div id="username-modal" class="modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2 class="modal-title">الانضمام إلى الغرفة</h2>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-desc">أدخل اسمك للانضمام إلى "<span id="room-name-display"></span>"</p>
+                    <input 
+                        type="text" 
+                        id="username-input" 
+                        class="form-input" 
+                        placeholder="أدخل اسمك..."
+                        autofocus
+                    >
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-block" onclick="joinRoom()">
+                        الانضمام
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<div id="app" style="display:none">
-  <div class="video">
-    <video id="player" class="video-js vjs-default-skin" controls></video>
-  </div>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <button class="btn-back" onclick="goHome()">
+                        <span>✕</span>
+                    </button>
+                    <div class="room-info-header">
+                        <h1 class="room-title-header" id="room-name-main"></h1>
+                        <div class="room-meta">
+                            <span class="room-users-count" id="users-count">
+                                <span class="users-icon">👥</span>
+                                <span class="users-number">1</span>
+                            </span>
+                            <span class="room-host" id="room-host"></span>
+                        </div>
+                    </div>
+                    <button class="btn-share" onclick="shareRoom()">
+                        <span class="share-icon">🔗</span>
+                        <span class="share-text">مشاركة</span>
+                    </button>
+                </div>
+            </div>
+        </header>
 
-  <div class="chat">
-    <div id="messages"></div>
-    <form onsubmit="sendMsg(event)">
-      <input id="msg" placeholder="اكتب رسالة...">
-      <button>إرسال</button>
-    </form>
-  </div>
-</div>
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <div class="room-layout">
+                    <!-- Video Section -->
+                    <div class="video-section">
+                        <div class="video-container">
+                            <video 
+                                id="video-player" 
+                                class="video-player"
+                                crossOrigin="anonymous"
+                                playsinline
+                            >
+                                <track 
+                                    id="subtitle-track" 
+                                    kind="subtitles" 
+                                    srclang="ar" 
+                                    label="العربية"
+                                    default
+                                >
+                            </video>
+                            
+                            <!-- Video Controls Overlay -->
+                            <div class="video-controls">
+                                <!-- Progress Bar -->
+                                <div class="progress-container" onclick="seekToPosition(event)">
+                                    <div class="progress-bar">
+                                        <div class="progress-filled" id="progress-filled"></div>
+                                    </div>
+                                    <div class="progress-handle" id="progress-handle"></div>
+                                </div>
+                                <div class="time-display">
+                                    <span id="current-time">0:00</span>
+                                    <span>/</span>
+                                    <span id="duration">0:00</span>
+                                </div>
+                                </div>
 
-<script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="room.js"></script>
+                                <!-- Control Buttons -->
+                                <div class="control-buttons">
+                                    <!-- Left Group -->
+                                    <div class="control-group control-group-left">
+                                        <button class="btn-control" onclick="skip(-10)" title="ترجيع 10 ثواني">
+                                            <span>⏪</span>
+                                        </button>
+                                        <button class="btn-control btn-play-pause" id="btn-play-pause" onclick="togglePlay()">
+                                            <span id="play-icon" class="hidden">▶</span>
+                                            <span id="pause-icon">⏸</span>
+                                        </button>
+                                        <button class="btn-control" onclick="skip(10)" title="تقديم 10 ثواني">
+                                            <span>⏩</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Center Group (Time) -->
+                                    <div class="time-display-mobile">
+                                        <span id="current-time-mobile">0:00</span>
+                                        <span>/</span>
+                                        <span id="duration-mobile">0:00</span>
+                                    </div>
+
+                                    <!-- Right Group -->
+                                    <div class="control-group control-group-right">
+                                        <!-- Speed Control -->
+                                        <div class="speed-control">
+                                            <span class="speed-label">السرعة:</span>
+                                            <div class="speed-buttons">
+                                                <button class="btn-speed" data-speed="0.5" onclick="setSpeed(0.5)">0.5x</button>
+                                                <button class="btn-speed" data-speed="1" onclick="setSpeed(1)">1x</button>
+                                                <button class="btn-speed" data-speed="1.5" onclick="setSpeed(1.5)">1.5x</button>
+                                                <button class="btn-speed" data-speed="2" onclick="setSpeed(2)">2x</button>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn-control" onclick="toggleFullscreen()" title="ملء الشاشة">
+                                            <span>⛶</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Room Info Card -->
+                        <div class="room-info-card">
+                            <div class="info-item">
+                                <span class="info-label">رابط الفيديو:</span>
+                                <span class="info-value" id="video-url-display"></span>
+                            </div>
+                            <div class="info-item info-item-subtitle">
+                                <span class="info-label">الترجمة:</span>
+                                <span class="info-value" id="subtitle-display">لا توجد</span>
+                            </div>
+                            <div class="info-note">
+                                <span class="note-icon">💡</span>
+                                <span class="note-text">يتم تزامن الجميع تلقائياً. عندما يشغل أحد الفيديو أو يوقفه، سيتبعه الجميع!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Section -->
+                    <div class="chat-section">
+                        <div class="chat-header">
+                            <h3 class="chat-title">💬 الشات</h3>
+                            <span class="chat-users-count" id="chat-users-count">
+                                <span>👥</span>
+                                <span id="chat-users-number">1</span>
+                            </span>
+                        </div>
+                        
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-welcome">
+                                <span class="chat-welcome-text">👋 مرحباً! شارك أفلامك مع أصدقائك في الوقت الحقيقي</span>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-container">
+                            <input 
+                                type="text" 
+                                id="chat-input" 
+                                class="chat-input" 
+                                placeholder="اكتب رسالتك..."
+                                onkeypress="handleChatKeypress(event)"
+                            >
+                            <button class="btn-send" onclick="sendMessage()">
+                                <span>📤</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>Watch Party - تجربة مشاهدة متزامنة</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="client-room.js"></script>
 </body>
 </html>
