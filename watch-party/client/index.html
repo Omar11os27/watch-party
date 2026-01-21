@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Party Pro</title>
+    <title>Watch Party Pro | Anbar Univ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="setup-container">
         <div class="setup-box">
-            <h1>🎬 Watch Party</h1>
-            <input type="text" id="user-name" placeholder="اسمك...">
+            <h1>🎬 Watch Party Pro</h1>
+            <input type="text" id="user-name" placeholder="أدخل اسمك...">
             <input type="text" id="movie-url" placeholder="رابط الفيلم المباشر...">
-            <input type="file" id="sub-file" accept=".srt,.vtt">
-            <button onclick="startParty()">ابدأ</button>
+            <input type="file" id="sub-file" accept=".vtt,.srt" style="margin: 10px 0; color: #aaa;">
+            <button onclick="startParty()">ابدأ الآن</button>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
         <div class="chat-section">
             <div id="messages"></div>
             <form class="input-area" onsubmit="event.preventDefault(); sendMessage();">
-                <input id="msg" type="text" placeholder="اكتب..." autocomplete="off">
+                <input id="msg" type="text" placeholder="اكتب رسالة..." autocomplete="off">
                 <button type="submit">إرسال</button>
             </form>
         </div>
