@@ -7,37 +7,37 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 const rooms = {};
 
-io.on("connection", socket => {
-  socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
-    socket.join(roomId);
-    if (!rooms[roomId]) {
-      // حفظ كل البيانات في كائن الغرفة
-      rooms[roomId] = { 
-          time: 0, 
-          playing: false, 
-          movieUrl: movieUrl || "", 
-          subContent: subContent || "" 
-      };
-    }
-    socket.emit("sync-state", rooms[roomId]);
-  });
+io.on("connection", (socket) => {
+    socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
+        socket.join(roomId);
+        if (!rooms[roomId]) {
+            rooms[roomId] = { 
+                time: 0, 
+                playing: false, 
+                movieUrl: movieUrl || "", 
+                subContent: subContent || "" 
+            };
+        }
+        socket.emit("sync-state", rooms[roomId]);
+    });
 
-  socket.on("play", ({ roomId, time }) => {
-    if (rooms[roomId]) { rooms[roomId].playing = true; socket.to(roomId).emit("play", time); }
-  });
+    socket.on("play", ({ roomId, time }) => {
+        if (rooms[roomId]) { rooms[roomId].playing = true; socket.to(roomId).emit("play", time); }
+    });
 
-  socket.on("pause", ({ roomId, time }) => {
-    if (rooms[roomId]) { rooms[roomId].playing = false; socket.to(roomId).emit("pause", time); }
-  });
+    socket.on("pause", ({ roomId, time }) => {
+        if (rooms[roomId]) { rooms[roomId].playing = false; socket.to(roomId).emit("pause", time); }
+    });
 
-  socket.on("seek", ({ roomId, time }) => {
-    if (rooms[roomId]) { rooms[roomId].time = time; socket.to(roomId).emit("seek", time); }
-  });
+    socket.on("seek", ({ roomId, time }) => {
+        if (rooms[roomId]) { rooms[roomId].time = time; socket.to(roomId).emit("seek", time); }
+    });
 
-  socket.on("chat", (data) => {
-    // إرسال للكل حتى تظهر الرسالة عند المرسل أيضاً
-    io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
-  });
+    socket.on("chat", (data) => {
+        if (data.roomId) {
+            io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
+        }
+    });
 });
 
 server.listen(process.env.PORT || 3000, () => console.log("Server Live!"));

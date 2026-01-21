@@ -7,23 +7,23 @@ let isRemoteAction = false;
 let subContent = "";
 
 document.addEventListener("DOMContentLoaded", () => {
-    player = videojs('my-video', {
-        html5: { vhs: { overrideNative: true }, nativeAudioTracks: false, nativeVideoTracks: false }
-    });
+    player = videojs('my-video');
 
-    // التعامل مع رفع ملف الترجمة
+    if (roomId) {
+        document.getElementById('movie-url').style.display = 'none';
+        document.querySelector('.file-upload').style.display = 'none';
+        document.querySelector('.setup-box h1').innerText = "الانضمام للسهرة";
+    }
+
     document.getElementById('sub-file').onchange = (e) => {
         const file = e.target.files[0];
         document.getElementById('file-name').innerText = file.name;
         let reader = new FileReader();
         reader.onload = (event) => { 
             let text = event.target.result;
-            // تحويل SRT إلى VTT (ضروري جداً للمتصفح)
             if (file.name.endsWith('.srt')) {
                 subContent = "WEBVTT\n\n" + text.replace(/\r/g, "").replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
-            } else {
-                subContent = text;
-            }
+            } else { subContent = text; }
         };
         reader.readAsText(file);
     };
@@ -36,7 +36,7 @@ function startParty() {
     localStorage.setItem("userName", name);
 
     if (!roomId) {
-        if (!movieUrl) return alert("الصق رابط الفيديو!");
+        if (!movieUrl) return alert("الصق رابط الفيلم!");
         roomId = Math.random().toString(36).substring(7);
         window.history.pushState({}, '', `?room=${roomId}`);
         socket.emit("join-room", { roomId, movieUrl, subContent });
@@ -48,7 +48,8 @@ function startParty() {
 }
 
 function setupVideo(url, sub) {
-    player.src({ type: 'video/mp4', src: url });
+    let type = url.includes(".m3u8") ? 'application/x-mpegURL' : 'video/mp4';
+    player.src({ type: type, src: url });
     if (sub) {
         let blob = new Blob([sub], { type: 'text/vtt' });
         let urlSub = URL.createObjectURL(blob);
@@ -56,11 +57,8 @@ function setupVideo(url, sub) {
     }
 }
 
-socket.on("sync-state", state => {
-    if (state.movieUrl) setupVideo(state.movieUrl, state.subContent);
-});
+socket.on("sync-state", state => { if (state.movieUrl) setupVideo(state.movieUrl, state.subContent); });
 
-// مزامنة الأوامر
 player.on('play', () => { if(!isRemoteAction) socket.emit("play", {roomId, time: player.currentTime()}); });
 player.on('pause', () => { if(!isRemoteAction) socket.emit("pause", {roomId, time: player.currentTime()}); });
 player.on('seeked', () => { if(!isRemoteAction) socket.emit("seek", {roomId, time: player.currentTime()}); });
@@ -69,12 +67,11 @@ socket.on("play", t => { isRemoteAction=true; player.currentTime(t); player.play
 socket.on("pause", t => { isRemoteAction=true; player.pause(); setTimeout(()=>isRemoteAction=false, 500); });
 socket.on("seek", t => { isRemoteAction=true; player.currentTime(t); setTimeout(()=>isRemoteAction=false, 500); });
 
-// الشات - تعديل العرض
 function sendMessage() {
     const input = document.getElementById("msg");
-    const name = localStorage.getItem("userName");
-    if (input.value.trim()) {
-        socket.emit("chat", { roomId, message: input.value, user: name });
+    const name = localStorage.getItem("userName") || "مستخدم";
+    if (input.value.trim() && roomId) {
+        socket.emit("chat", { roomId: roomId, message: input.value, user: name });
         input.value = "";
     }
 }
