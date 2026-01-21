@@ -4,125 +4,98 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-}
-
 body {
-  background: #000;
-  color: #fff;
-  font-family: system-ui, sans-serif;
-  overflow: hidden;
+  background: #0f0f0f;
+  color: #efefef;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===== الصفحة الرئيسية ===== */
+/* تحسين الصناديق في الصفحة الرئيسية */
 .box {
-  background: #111;
-  border-radius: 14px;
-  padding: 22px;
-  width: 90%;
-  max-width: 420px;
-  margin: 60px auto;
-  text-align: center;
-  border: 1px solid #222;
-}
-
-.box h2 {
-  margin-bottom: 14px;
-}
-
-.box input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: 1px solid #333;
   background: #1a1a1a;
-  color: white;
+  border-radius: 15px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  margin: auto; /* يخليها بنص الشاشة */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid #333;
 }
 
-.box button {
+.box h2 { margin-bottom: 20px; color: #e50914; }
+
+input {
   width: 100%;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
   border: none;
   background: #e50914;
   color: white;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-/* ===== غرفة المشاهدة ===== */
+button:hover { background: #b20710; }
+
+/* تصميم غرفة المشاهدة المتجاوب */
 #app {
+  display: flex;
+  flex-direction: row; /* للحاسبة: فيديو بصف الشات */
   height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
 }
 
-/* الفيديو 60% */
 .video {
-  flex: 0 0 60%;
-  position: relative;
-  background: black;
+  flex: 3; /* الفيديو ياخذ مساحة أكبر */
+  background: #000;
+  display: flex;
+  align-items: center;
 }
 
-.video video,
-.video .video-js {
-  position: absolute;
-  inset: 0;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* الشات 40% */
 .chat {
-  flex: 0 0 40%;
-  background: #111;
+  flex: 1; /* الشات على الجانب */
+  background: #141414;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #222;
+  border-right: 1px solid #333;
+}
+
+/* جعل التصميم عمودي في الموبايل */
+@media (max-width: 768px) {
+  #app { flex-direction: column; }
+  .video { flex: 1.5; }
+  .chat { flex: 2; }
 }
 
 #messages {
   flex: 1;
-  padding: 12px;
   overflow-y: auto;
+  padding: 15px;
 }
 
-#messages div {
-  background: #1f1f1f;
-  padding: 8px 10px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-#messages b {
-  color: #e50914;
-}
-
-/* إدخال الشات */
-.chat form {
-  display: flex;
-  gap: 6px;
-  padding: 10px;
-  background: #000;
-}
-
-.chat input {
-  flex: 1;
-  padding: 12px;
+.msg-item {
+  background: #262626;
+  padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: white;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
 }
 
-.chat button {
-  padding: 12px 18px;
-  border-radius: 10px;
-  border: none;
-  background: #e50914;
-  color: white;
+.share-btn {
+  background: #28a745;
+  margin: 10px;
+  width: calc(100% - 20px);
 }

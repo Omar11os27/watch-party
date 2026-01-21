@@ -7,10 +7,9 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 const rooms = {}; 
-// roomId: { movieUrl, subContent, time, playing }
 
 io.on("connection", socket => {
-
+  // إنشاء الغرفة أو تحديث بياناتها
   socket.on("create-room", data => {
     rooms[data.roomId] = {
       movieUrl: data.movieUrl,
@@ -18,28 +17,38 @@ io.on("connection", socket => {
       time: 0,
       playing: false
     };
+    console.log(`Room Created: ${data.roomId}`);
   });
 
   socket.on("join-room", roomId => {
     socket.join(roomId);
-    socket.emit("sync-state", rooms[roomId]);
+    // إذا الغرفة موجودة، نرسل البيانات فوراً للشخص الجديد
+    if (rooms[roomId]) {
+      socket.emit("sync-state", rooms[roomId]);
+    }
   });
 
   socket.on("play", d => {
-    rooms[d.roomId].playing = true;
-    rooms[d.roomId].time = d.time;
-    socket.to(d.roomId).emit("play", d.time);
+    if (rooms[d.roomId]) {
+      rooms[d.roomId].playing = true;
+      rooms[d.roomId].time = d.time;
+      socket.to(d.roomId).emit("play", d.time);
+    }
   });
 
   socket.on("pause", d => {
-    rooms[d.roomId].playing = false;
-    rooms[d.roomId].time = d.time;
-    socket.to(d.roomId).emit("pause", d.time);
+    if (rooms[d.roomId]) {
+      rooms[d.roomId].playing = false;
+      rooms[d.roomId].time = d.time;
+      socket.to(d.roomId).emit("pause", d.time);
+    }
   });
 
   socket.on("seek", d => {
-    rooms[d.roomId].time = d.time;
-    socket.to(d.roomId).emit("seek", d.time);
+    if (rooms[d.roomId]) {
+      rooms[d.roomId].time = d.time;
+      socket.to(d.roomId).emit("seek", d.time);
+    }
   });
 
   socket.on("chat", d => {
@@ -47,4 +56,5 @@ io.on("connection", socket => {
   });
 });
 
-server.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

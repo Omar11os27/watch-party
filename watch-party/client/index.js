@@ -1,26 +1,54 @@
-const nameBox = document.getElementById("name-box");
-const roomBox = document.getElementById("room-box");
+const authBox = document.getElementById("auth-box");
+const setupBox = document.getElementById("setup-box");
+const nameInput = document.getElementById("user-name");
 
-const savedName = localStorage.getItem("name");
+// قراءة الـ Room ID من الرابط (إذا موجود)
+const urlParams = new URLSearchParams(window.location.search);
+const existingRoomId = urlParams.get("room");
 
-if (savedName) {
-  nameBox.style.display = "none";
-  roomBox.style.display = "block";
+// إذا الاسم محفوظ مسبقاً، نمليه تلقائياً
+if (localStorage.getItem("name")) {
+    nameInput.value = localStorage.getItem("name");
 }
 
-function saveName() {
-  const name = document.getElementById("name").value.trim();
-  if (!name) return alert("اكتب اسمك");
-  localStorage.setItem("name", name);
-  location.reload();
+function handleNextStep() {
+    const name = nameInput.value.trim();
+    if (!name) return alert("الاسم مطلوب حبيب قلبي");
+    
+    localStorage.setItem("name", name);
+
+    if (existingRoomId) {
+        // إذا هو داخل عبر رابط غرفة موجودة، نوديه قبل للغرفة
+        window.location.href = `room.html?room=${existingRoomId}`;
+    } else {
+        // إذا هو ديدخل للموقع الرئيسي، نظهر له خيارات إنشاء الغرفة
+        authBox.style.display = "none";
+        setupBox.style.display = "block";
+    }
 }
 
-function createRoom() {
-  const movie = document.getElementById("movie").value.trim();
-  if (!movie) return alert("ضع رابط الفيلم");
+let subContent = "";
+// معالجة ملف الترجمة قبل الرفع
+document.getElementById("sub-file").addEventListener("change", e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = ev => {
+        subContent = file.name.endsWith(".srt") 
+            ? "WEBVTT\n\n" + ev.target.result.replace(/,/g, ".") 
+            : ev.target.result;
+    };
+    reader.readAsText(file);
+});
 
-  const roomId = Math.random().toString(36).substring(7);
-  localStorage.setItem("movie", movie);
+function createNewRoom() {
+    const movieUrl = document.getElementById("movie-url").value.trim();
+    if (!movieUrl) return alert("لازم تخلي رابط فيديو عيني");
 
-  window.location.href = `room.html?room=${roomId}&owner=1`;
+    const roomId = Math.random().toString(36).substring(7);
+    
+    // خزن البيانات محلياً حتى تسحبها صفحة الـ room
+    sessionStorage.setItem("init_movie", movieUrl);
+    sessionStorage.setItem("init_subs", subContent);
+
+    window.location.href = `room.html?room=${roomId}&owner=1`;
 }

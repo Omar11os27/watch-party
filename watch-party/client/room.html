@@ -9,14 +9,6 @@
 </head>
 <body>
 
-<!-- أدوات المالك فقط -->
-<div id="owner-controls" class="box">
-  <h2>إعداد الغرفة</h2>
-  <input id="movie-url" placeholder="رابط الفيديو">
-  <input type="file" id="sub-file" accept=".vtt,.srt">
-  <button onclick="initRoom()">تشغيل</button>
-</div>
-
 <div id="app" style="display:none">
   <div class="video">
     <video id="player" class="video-js vjs-default-skin" controls></video>
@@ -25,7 +17,7 @@
   <div class="chat">
     <div id="messages"></div>
     <form onsubmit="sendMsg(event)">
-      <input id="msg" placeholder="اكتب...">
+      <input id="msg" placeholder="اكتب رسالة...">
       <button>إرسال</button>
     </form>
   </div>
