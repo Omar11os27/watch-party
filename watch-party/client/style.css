@@ -1,33 +1,28 @@
-:root { --primary: #e50914; --bg: #0a0a0a; --surface: #1a1a1a; --text: #ffffff; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; height: 100vh; overflow: hidden; }
+body { background: #000; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-/* Setup Box */
-#setup-container { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.setup-box { background: var(--surface); padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.logo { font-size: 24px; margin-bottom: 20px; }
-.logo span { color: var(--primary); }
-input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 8px; }
-.btn-primary { background: var(--primary); width: 100%; padding: 12px; border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
+/* صفحة الدخول */
+#setup-container { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.setup-box { background: #111; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; }
+.setup-box input { width: 100%; padding: 12px; margin: 8px 0; background: #222; border: 1px solid #444; color: white; border-radius: 8px; }
+.setup-box button { width: 100%; padding: 12px; background: #e50914; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-/* Layout 60% Video / 40% Chat */
-#main-app { display: flex; flex-direction: column; height: 100vh; }
-.video-container { height: 60vh; width: 100%; background: #000; position: relative; }
-.video-js { width: 100% !important; height: 100% !important; }
+/* المشغل 60% والشات 40% */
+.video-section { height: 60vh; width: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
+video { width: 100%; height: 100%; object-fit: contain; }
 
-.chat-container { height: 40vh; display: flex; flex-direction: column; background: var(--surface); border-top: 3px solid #333; }
-.chat-header { padding: 10px; background: #111; font-weight: bold; font-size: 14px; text-align: center; border-bottom: 1px solid #333; }
-#messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-.msg-item { background: #262626; padding: 10px 15px; border-radius: 12px; max-width: 85%; align-self: flex-start; border-left: 3px solid var(--primary); font-size: 14px; }
-.msg-item strong { color: var(--primary); display: block; font-size: 11px; margin-bottom: 3px; }
+.chat-section { height: 40vh; width: 100%; background: #111; display: flex; flex-direction: column; border-top: 2px solid #333; }
+#messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+.msg-item { background: #222; padding: 8px 12px; border-radius: 10px; max-width: 85%; align-self: flex-start; border-right: 3px solid #e50914; }
+.msg-item strong { color: #e50914; font-size: 12px; display: block; }
 
-.chat-input-area { padding: 10px; display: flex; gap: 8px; background: #000; }
-#msg { margin: 0; }
-.chat-input-area button { background: var(--primary); border: none; color: white; padding: 0 20px; border-radius: 8px; cursor: pointer; }
+.input-area { padding: 10px; background: #000; display: flex; gap: 8px; }
+#msg { flex: 1; padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; }
+.input-area button { background: #e50914; border: none; padding: 0 15px; color: white; border-radius: 8px; cursor: pointer; }
 
-/* Desktop Mode */
-@media (min-width: 1024px) {
-    #main-app { flex-direction: row; }
-    .video-container { height: 100vh; flex: 0 0 75%; }
-    .chat-container { height: 100vh; flex: 0 0 25%; border-top: none; border-right: 2px solid #333; }
+/* للحاسبة: يصيرون يمين ويسار */
+@media (min-width: 768px) {
+    body { flex-direction: row; }
+    .video-section { height: 100vh; flex: 3; }
+    .chat-section { height: 100vh; flex: 1; border-top: none; border-left: 2px solid #333; }
 }

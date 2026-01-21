@@ -2,41 +2,34 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Watch Party Pro | Anbar University</title>
-    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Party Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="setup-container">
         <div class="setup-box">
-            <h1 class="logo">🎬 Watch Party <span>Pro</span></h1>
-            <input type="text" id="user-name" placeholder="ما هو اسمك المستعار؟">
-            <input type="text" id="movie-url" placeholder="الصق رابط فيديو سينمانا المباشر...">
-            <div class="file-input-wrapper">
-                <label for="sub-file" class="btn-secondary">📁 رفع الترجمة (SRT/VTT)</label>
-                <input type="file" id="sub-file" accept=".srt,.vtt">
-                <p id="file-status">لم يتم اختيار ملف</p>
-            </div>
-            <button onclick="startParty()" class="btn-primary">ابدأ المشاهدة الجماعية</button>
+            <h1>🎬 Watch Party</h1>
+            <input type="text" id="user-name" placeholder="اسمك...">
+            <input type="text" id="movie-url" placeholder="رابط الفيلم المباشر...">
+            <input type="file" id="sub-file" accept=".srt,.vtt">
+            <button onclick="startParty()">ابدأ</button>
         </div>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div class="video-container">
-            <video id="my-video" class="video-js vjs-big-play-centered" crossorigin="anonymous"></video>
+        <div class="video-section">
+            <video id="my-video" controls playsinline crossorigin="anonymous"></video>
         </div>
-        <div class="chat-container">
-            <div class="chat-header">🗨️ الشات المباشر</div>
+        <div class="chat-section">
             <div id="messages"></div>
-            <form class="chat-input-area" onsubmit="event.preventDefault(); sendMessage();">
-                <input id="msg" type="text" placeholder="اكتب رسالة..." autocomplete="off">
+            <form class="input-area" onsubmit="event.preventDefault(); sendMessage();">
+                <input id="msg" type="text" placeholder="اكتب..." autocomplete="off">
                 <button type="submit">إرسال</button>
             </form>
         </div>
     </div>
 
-    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="client.js"></script>
 </body>
