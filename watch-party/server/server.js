@@ -40,6 +40,15 @@ io.on("connection", socket => {
   socket.on("chat", (data) => {
     io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
   });
+
+  socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
+    socket.join(roomId);
+    if (!rooms[roomId]) {
+      rooms[roomId] = { time: 0, playing: false, movieUrl: movieUrl || "", subContent: subContent || "" };
+    }
+    socket.emit("sync-state", rooms[roomId]);
+  });
+  
 });
 
 server.listen(process.env.PORT || 3000, () => console.log("Server Live!"));

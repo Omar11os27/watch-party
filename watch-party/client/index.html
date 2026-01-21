@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch Party Pro</title>
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css">
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-    <h2>🎬 Watch Party Pro</h2>
     <div class="video-container">
-        <video id="video" controls playsinline style="display:none;"></video>
-        <div id="youtube-container" style="display:none;"></div>
+        <video id="my-video" class="video-js vjs-big-play-centered" controls preload="auto"></video>
     </div>
+
     <div id="chat">
         <div id="messages"></div>
         <div class="input-area">
@@ -20,6 +19,8 @@
             <button onclick="sendMessage()">إرسال</button>
         </div>
     </div>
+
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="client.js"></script>
 </body>
