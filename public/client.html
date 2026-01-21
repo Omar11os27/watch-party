@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Party - شاهد مع أصدقائك</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <span class="logo-icon">🎬</span>
+                        <span class="logo-text">Watch Party</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="openCreateModal()">
+                        <span class="plus">+</span>
+                        <span class="btn-text">إنشاء غرفة</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <h1 class="hero-title">شاهد معًا في الوقت الحقيقي</h1>
+                    <p class="hero-subtitle">أنشئ غرفة مشاهدة وشارك رابطها مع أصدقائك. التزامن التلقائي يضمن أن الجميع يشاهد نفس اللحظة!</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <span class="feature-icon">👥</span>
+                            <span class="feature-text">مشاهدة جماعية</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">⚡</span>
+                            <span class="feature-text">تزامن فوري</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">💬</span>
+                            <span class="feature-text">شات مباشر</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sample Videos -->
+                <section class="sample-videos">
+                    <h2 class="section-title">فيديوهات تجريبية</h2>
+                    <div class="videos-grid">
+                        <div class="video-sample" onclick="selectSample(0)">
+                            <div class="video-sample-icon">🐰</div>
+                            <div class="video-sample-info">
+                                <h3>Big Buck Bunny</h3>
+                                <p>رسوم متحركة كلاسيكية</p>
+                            </div>
+                        </div>
+                        <div class="video-sample" onclick="selectSample(1)">
+                            <div class="video-sample-icon">🐠</div>
+                            <div class="video-sample-info">
+                                <h3>Jellyfish</h3>
+                                <p>عينة HD مع ترجمة</p>
+                            </div>
+                        </div>
+                        <div class="video-sample" onclick="selectSample(2)">
+                            <div class="video-sample-icon">🐲</div>
+                            <div class="video-sample-info">
+                                <h3>Sintel</h3>
+                                <p>مشهد طبيعي جميل</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Rooms List -->
+                <section class="rooms-section">
+                    <div class="section-header">
+                        <h2 class="section-title">الغرف النشطة</h2>
+                        <button class="btn-refresh" onclick="loadRooms()">
+                            <span>🔄</span>
+                        </button>
+                    </div>
+                    
+                    <div id="rooms-list" class="rooms-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>جاري تحميل الغرف...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>Watch Party - شاهد معًا، في أي وقت، في أي مكان</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div id="create-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">إنشاء غرفة مشاهدة</h2>
+                <button class="btn-close" onclick="closeCreateModal()">✕</button>
+            </div>
+            
+            <form id="create-form" class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">اسم الغرفة *</label>
+                    <input 
+                        type="text" 
+                        id="room-name" 
+                        class="form-input" 
+                        placeholder="مثال: ليلة الأفلام"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رابط الفيديو *</label>
+                    <input 
+                        type="url" 
+                        id="video-url" 
+                        class="form-input" 
+                        placeholder="رابط الفيديو المباشر..."
+                        required
+                    >
+                    <button type="button" class="btn-sample-toggle" onclick="toggleSampleVideos()" title="عرض فيديوهات تجريبية">
+                        <span>🎬</span>
+                    </button>
+                </div>
+
+                <div id="sample-videos-panel" class="sample-videos-panel hidden">
+                    <p class="panel-title">اختر فيديو تجريبي:</p>
+                    <div class="sample-options">
+                        <button type="button" class="sample-option" onclick="selectSample(0)">
+                            <div class="sample-option-icon">🐰</div>
+                            <div>
+                                <strong>Big Buck Bunny</strong>
+                                <small>رسوم متحركة</small>
+                            </div>
+                        </button>
+                        <button type="button" class="sample-option" onclick="selectSample(1)">
+                            <div class="sample-option-icon">🐠</div>
+                            <div>
+                                <strong>Jellyfish</strong>
+                                <small>عينة HD</small>
+                            </div>
+                        </button>
+                        <button type="button" class="sample-option" onclick="selectSample(2)">
+                            <div class="sample-option-icon">🐲</div>
+                            <div>
+                                <strong>Sintel</strong>
+                                <small>مشهد طبيعي</small>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">مصدر الترجمة</label>
+                    <div class="subtitle-source-toggle">
+                        <button type="button" class="source-btn active" data-source="url" onclick="setSubtitleSource('url')">
+                            <span>🔗</span>
+                            <span>رابط</span>
+                        </button>
+                        <button type="button" class="source-btn" data-source="file" onclick="setSubtitleSource('file')">
+                            <span>📤</span>
+                            <span>رفع ملف</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="url-subtitle-group" class="form-group">
+                    <label class="form-label">رابط الترجمة (اختياري)</label>
+                    <input 
+                        type="url" 
+                        id="subtitle-url" 
+                        class="form-input" 
+                        placeholder="رابط ملف الترجمة..."
+                    >
+                    <p class="form-hint">يدعم: VTT, SRT, ASS, SSA</p>
+                </div>
+
+                <div id="file-subtitle-group" class="form-group hidden">
+                    <label class="form-label">ملف الترجمة (اختياري)</label>
+                    <input 
+                        type="file" 
+                        id="subtitle-file" 
+                        class="form-input" 
+                        accept=".vtt,.srt,.ass,.ssa"
+                        onchange="handleSubtitleFile(this)"
+                    >
+                    <div id="file-info" class="file-info hidden">
+                        <span class="file-name"></span>
+                        <button type="button" class="btn-remove-file" onclick="removeSubtitleFile()">✕</button>
+                    </div>
+                    <p class="form-hint">
+                        <span class="hint-icon">✓</span>
+                        يتم التحويل التلقائي من SRT إلى VTT
+                    </p>
+                    <p class="form-hint">الصيغ المدعومة: VTT, SRT, ASS, SSA (حتى 10MB)</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">اسمك *</label>
+                    <input 
+                        type="text" 
+                        id="host-name" 
+                        class="form-input" 
+                        placeholder="مثال: أحمد"
+                        required
+                    >
+                </div>
+
+                <div id="form-status" class="form-status hidden">
+                    <div class="status-spinner"></div>
+                    <span class="status-text"></span>
+                </div>
+            </form>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeCreateModal()">إلغاء</button>
+                <button type="button" class="btn btn-primary btn-block" onclick="createRoom()">
+                    <span class="btn-text">إنشاء والمشاركة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
