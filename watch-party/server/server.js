@@ -3,25 +3,16 @@ const http = require("http");
 const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
-
 const io = new Server(server, { cors: { origin: "*" } });
-const rooms = {}; // مخزن الغرف: يحفظ الرابط، الترجمة، والوقت الحالي
+
+const rooms = {};
 
 io.on("connection", (socket) => {
     socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
         socket.join(roomId);
-        
-        // إذا الغرفة مو موجودة (أنت الأدمن)، ننشأها ونخزن الرابط والترجمة
         if (!rooms[roomId]) {
-            rooms[roomId] = { 
-                movieUrl: movieUrl || "", 
-                subContent: subContent || "",
-                time: 0,
-                playing: false
-            };
+            rooms[roomId] = { movieUrl, subContent, time: 0, playing: false };
         }
-        
-        // نرسل البيانات المخزونة بالسيرفر للشخص اللي دخل (سواء أدمن أو صديق)
         socket.emit("sync-state", rooms[roomId]);
     });
 
@@ -47,10 +38,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on("chat", (data) => {
-        if (data.roomId) {
-            io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
-        }
+        io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
     });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log("Server Running..."));
+server.listen(process.env.PORT || 3000, () => console.log("Server is running..."));
