@@ -66,9 +66,9 @@ function joinRoom() {
 }
 
 // Initialize socket and room
-function init() {
+async function init() {
     // Initialize socket
-    socket = io({
+    socket = io('https://watch-party-v2gx.onrender.com',{
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 10,

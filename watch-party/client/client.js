@@ -310,7 +310,7 @@ async function createRoom() {
 
 // Join room
 function joinRoom(roomId) {
-    window.location.href = `/client-room.html?id=${roomId}`;
+    window.location.href = `/room.html?id=${roomId}`;
 }
 
 // Format date
