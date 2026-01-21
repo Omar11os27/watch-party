@@ -1,35 +1,34 @@
-/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   background: #000;
   color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  height: 100vh;
+  font-family: system-ui, sans-serif;
   overflow: hidden;
 }
 
-/* =========================
-   الصفحة الرئيسية (index)
-   ========================= */
+/* ===== الصفحة الرئيسية ===== */
 .box {
   background: #111;
   border-radius: 14px;
   padding: 22px;
   width: 90%;
   max-width: 420px;
-  margin: 40px auto;
+  margin: 60px auto;
   text-align: center;
   border: 1px solid #222;
 }
 
 .box h2 {
   margin-bottom: 14px;
-  font-size: 22px;
 }
 
 .box input {
@@ -40,7 +39,6 @@ body {
   border: 1px solid #333;
   background: #1a1a1a;
   color: white;
-  font-size: 15px;
 }
 
 .box button {
@@ -54,30 +52,32 @@ body {
   cursor: pointer;
 }
 
-/* =========================
-   غرفة المشاهدة (room)
-   ========================= */
-
+/* ===== غرفة المشاهدة ===== */
 #app {
   height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
 }
 
 /* الفيديو 60% */
 .video {
-  height: 60%;
+  flex: 0 0 60%;
+  position: relative;
   background: black;
 }
 
-.video video {
-  width: 100%;
-  height: 100%;
+.video video,
+.video .video-js {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* الشات 40% */
 .chat {
-  height: 40%;
+  flex: 0 0 40%;
   background: #111;
   display: flex;
   flex-direction: column;
@@ -90,7 +90,6 @@ body {
   overflow-y: auto;
 }
 
-/* رسالة */
 #messages div {
   background: #1f1f1f;
   padding: 8px 10px;
@@ -99,7 +98,6 @@ body {
   font-size: 14px;
 }
 
-/* اسم المستخدم */
 #messages b {
   color: #e50914;
 }
@@ -119,7 +117,6 @@ body {
   border: 1px solid #333;
   background: #1a1a1a;
   color: white;
-  font-size: 15px;
 }
 
 .chat button {
@@ -128,18 +125,4 @@ body {
   border: none;
   background: #e50914;
   color: white;
-  cursor: pointer;
-}
-
-/* =========================
-   تحسينات للموبايل
-   ========================= */
-@media (max-width: 480px) {
-  .box {
-    margin-top: 60px;
-  }
-
-  #messages div {
-    font-size: 13px;
-  }
 }

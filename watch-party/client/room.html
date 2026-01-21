@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Room</title>
+  <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="app">
+<!-- أدوات المالك فقط -->
+<div id="owner-controls" class="box">
+  <h2>إعداد الغرفة</h2>
+  <input id="movie-url" placeholder="رابط الفيديو">
+  <input type="file" id="sub-file" accept=".vtt,.srt">
+  <button onclick="initRoom()">تشغيل</button>
+</div>
+
+<div id="app" style="display:none">
   <div class="video">
-    <video id="player" class="video-js" controls></video>
+    <video id="player" class="video-js vjs-default-skin" controls></video>
   </div>
+
   <div class="chat">
     <div id="messages"></div>
-    <form onsubmit="send(event)">
-      <input id="msg">
+    <form onsubmit="sendMsg(event)">
+      <input id="msg" placeholder="اكتب...">
       <button>إرسال</button>
     </form>
   </div>
