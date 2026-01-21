@@ -4,7 +4,10 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { 
+    cors: { origin: "*", methods: ["GET", "POST"] } 
+});
+
 const rooms = {};
 
 io.on("connection", (socket) => {
@@ -18,27 +21,43 @@ io.on("connection", (socket) => {
                 subContent: subContent || "" 
             };
         }
-        // إرسال البيانات فوراً للشخص الجديد (حتى يشتغل الفيديو عنده)
+        // إرسال حالة الغرفة كاملة للعضو الجديد فور انضمامه
         socket.emit("sync-state", rooms[roomId]);
     });
 
-    socket.on("play", ({ roomId, time }) => {
-        if (rooms[roomId]) { rooms[roomId].playing = true; rooms[roomId].time = time; socket.to(roomId).emit("play", time); }
+    socket.on("play", (data) => {
+        if (rooms[data.roomId]) {
+            rooms[data.roomId].playing = true;
+            rooms[data.roomId].time = data.time;
+            socket.to(data.roomId).emit("play", data.time);
+        }
     });
 
-    socket.on("pause", ({ roomId, time }) => {
-        if (rooms[roomId]) { rooms[roomId].playing = false; rooms[roomId].time = time; socket.to(roomId).emit("pause", time); }
+    socket.on("pause", (data) => {
+        if (rooms[data.roomId]) {
+            rooms[data.roomId].playing = false;
+            rooms[data.roomId].time = data.time;
+            socket.to(data.roomId).emit("pause", data.time);
+        }
     });
 
-    socket.on("seek", ({ roomId, time }) => {
-        if (rooms[roomId]) { rooms[roomId].time = time; socket.to(roomId).emit("seek", time); }
+    socket.on("seek", (data) => {
+        if (rooms[data.roomId]) {
+            rooms[data.roomId].time = data.time;
+            socket.to(data.roomId).emit("seek", data.time);
+        }
     });
 
     socket.on("chat", (data) => {
-        if (data.roomId) {
-            io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
+        if (data.roomId && data.message.trim()) {
+            io.to(data.roomId).emit("chat", { 
+                user: data.user, 
+                message: data.message,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
         }
     });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log("Server Running!"));
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`Master Server running on port ${PORT}`));
