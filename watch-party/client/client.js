@@ -11,14 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
         html5: { vhs: { overrideNative: true }, nativeAudioTracks: false, nativeVideoTracks: false }
     });
 
-    // التعامل مع رفع ملف الترجمة
+    // التعامل مع ملف الترجمة
     document.getElementById('sub-file').onchange = (e) => {
         const file = e.target.files[0];
         document.getElementById('file-name').innerText = file.name;
         let reader = new FileReader();
         reader.onload = (event) => { 
             let text = event.target.result;
-            // تحويل SRT إلى VTT (ضروري جداً للمتصفح)
             if (file.name.endsWith('.srt')) {
                 subContent = "WEBVTT\n\n" + text.replace(/\r/g, "").replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
             } else {
@@ -57,24 +56,43 @@ function setupVideo(url, sub) {
 }
 
 socket.on("sync-state", state => {
-    if (state.movieUrl) setupVideo(state.movieUrl, state.subContent);
+    if (state.movieUrl) {
+        setupVideo(state.movieUrl, state.subContent);
+        // مزامنة الوقت الحالي إذا دخل شخص متأخر
+        if(state.time > 0) player.currentTime(state.time);
+    }
 });
 
-// مزامنة الأوامر
+// إرسال أوامر التحكم للسيرفر
 player.on('play', () => { if(!isRemoteAction) socket.emit("play", {roomId, time: player.currentTime()}); });
 player.on('pause', () => { if(!isRemoteAction) socket.emit("pause", {roomId, time: player.currentTime()}); });
 player.on('seeked', () => { if(!isRemoteAction) socket.emit("seek", {roomId, time: player.currentTime()}); });
 
-socket.on("play", t => { isRemoteAction=true; player.currentTime(t); player.play().finally(()=>isRemoteAction=false); });
-socket.on("pause", t => { isRemoteAction=true; player.pause(); setTimeout(()=>isRemoteAction=false, 500); });
-socket.on("seek", t => { isRemoteAction=true; player.currentTime(t); setTimeout(()=>isRemoteAction=false, 500); });
+// استقبال الأوامر من السيرفر
+socket.on("play", t => { 
+    isRemoteAction = true; 
+    player.currentTime(t); 
+    player.play().finally(() => setTimeout(() => isRemoteAction = false, 500)); 
+});
+socket.on("pause", t => { 
+    isRemoteAction = true; 
+    player.pause(); 
+    setTimeout(() => isRemoteAction = false, 500); 
+});
+socket.on("seek", t => { 
+    isRemoteAction = true; 
+    player.currentTime(t); 
+    setTimeout(() => isRemoteAction = false, 500); 
+});
 
-// الشات - تعديل العرض
+// الشات
 function sendMessage() {
     const input = document.getElementById("msg");
-    const name = localStorage.getItem("userName");
-    if (input.value.trim()) {
-        socket.emit("chat", { roomId, message: input.value, user: name });
+    const name = localStorage.getItem("userName") || "مجهول";
+    const message = input.value.trim();
+    
+    if (message && roomId) {
+        socket.emit("chat", { roomId, message, user: name });
         input.value = "";
     }
 }

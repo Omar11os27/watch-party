@@ -31,8 +31,11 @@ io.on("connection", socket => {
   });
 
   socket.on("seek", ({ roomId, time }) => {
-    if (rooms[roomId]) { rooms[roomId].time = time; socket.to(roomId).emit("seek", time); }
-  });
+    if (rooms[roomId]) { 
+        rooms[roomId].time = time; // تحديث الوقت المخزن بالغرفة
+        socket.to(roomId).emit("seek", time); 
+    }
+});
 
   socket.on("chat", (data) => {
     // إرسال للكل حتى تظهر الرسالة عند المرسل أيضاً
