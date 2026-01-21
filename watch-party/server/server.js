@@ -44,10 +44,15 @@ io.on("connection", socket => {
   socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
     socket.join(roomId);
     if (!rooms[roomId]) {
-      rooms[roomId] = { time: 0, playing: false, movieUrl: movieUrl || "", subContent: subContent || "" };
+        rooms[roomId] = { 
+            time: 0, 
+            playing: false, 
+            movieUrl: movieUrl || "", 
+            subContent: subContent || "" 
+        };
     }
     socket.emit("sync-state", rooms[roomId]);
-  });
+});
   
 });
 

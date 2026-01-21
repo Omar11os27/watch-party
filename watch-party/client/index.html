@@ -8,15 +8,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="video-container">
-        <video id="my-video" class="video-js vjs-big-play-centered" controls preload="auto"></video>
+
+    <div id="setup-container">
+        <div class="setup-box">
+            <h1>🎬 Watch Party Pro</h1>
+            <p>أنشئ غرفة وشاهد مع أصدقائك من سينمانا</p>
+            <input type="text" id="user-name" placeholder="أدخل اسمك المستعار...">
+            <input type="text" id="movie-url" placeholder="الصق رابط الفيديو (mp4/m3u8)...">
+            
+            <div class="file-upload">
+                <label for="sub-file">📁 ارفع ملف الترجمة (اختياري)</label>
+                <input type="file" id="sub-file" accept=".vtt,.srt">
+                <span id="file-name">لم يتم اختيار ملف</span>
+            </div>
+
+            <button onclick="startParty()">ابدأ السهرة الآن</button>
+        </div>
     </div>
 
-    <div id="chat">
-        <div id="messages"></div>
-        <div class="input-area">
-            <input id="msg" placeholder="اكتب رسالة...">
-            <button onclick="sendMessage()">إرسال</button>
+    <div id="main-app" style="display: none;">
+        <div class="video-container">
+            <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
+        </div>
+        <div id="chat">
+            <div id="messages"></div>
+            <div class="input-area">
+                <input id="msg" placeholder="اكتب رسالة...">
+                <button onclick="sendMessage()">إرسال</button>
+            </div>
         </div>
     </div>
 
