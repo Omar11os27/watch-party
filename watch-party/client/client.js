@@ -1,65 +1,127 @@
-const SERVER_URL = "https://watch-party-v2gx.onrender.com";
-const socket = io(SERVER_URL);
-let player, roomId = new URLSearchParams(window.location.search).get('room'), isRemote = false, subContent = "";
+const socket = io("https://watch-party-v2gx.onrender.com");
 
-document.addEventListener("DOMContentLoaded", () => {
-    player = videojs('my-video');
-    
-    // منع حدوث تكرار بالأوامر (Loop)
-    const setRemote = () => { isRemote = true; setTimeout(() => isRemote = false, 1000); };
+const roomId =
+  new URLSearchParams(window.location.search).get("room") ||
+  Math.random().toString(36).substring(7);
 
-    if (roomId) {
-        document.getElementById('movie-url').style.display = 'none';
-        document.querySelector('.file-upload').style.display = 'none';
-    }
+history.replaceState({}, "", "?room=" + roomId);
 
-    // استقبال المزامنة
-    socket.on("play", t => { if(!player.playing()) { setRemote(); player.currentTime(t); player.play(); } });
-    socket.on("pause", t => { if(player.playing()) { setRemote(); player.currentTime(t); player.pause(); } });
-    socket.on("seek", t => { setRemote(); player.currentTime(t); });
+let player = videojs("player");
+let isRemote = false;
+let subText = "";
 
-    socket.on("sync-state", state => { if (state.movieUrl) initPlayer(state.movieUrl, state.subContent); });
+const ownerFields = document.getElementById("owner-fields");
 
-    // إرسال المزامنة
-    player.on('play', () => { if (!isRemote) socket.emit("play", { roomId, time: player.currentTime() }); });
-    player.on('pause', () => { if (!isRemote) socket.emit("pause", { roomId, time: player.currentTime() }); });
-    player.on('seeked', () => { if (!isRemote) socket.emit("seek", { roomId, time: player.currentTime() }); });
+socket.emit("check-room", roomId);
+
+socket.on("sync-state", state => {
+  if (state.movieUrl) {
+    initPlayer(state.movieUrl, state.subContent, state);
+    ownerFields.style.display = "none";
+  }
 });
 
-function initPlayer(url, sub) {
-    player.src({ type: 'video/mp4', src: url });
-    if (sub) {
-        const blob = new Blob([sub], { type: 'text/vtt' });
-        player.addRemoteTextTrack({ kind: 'captions', label: 'العربية', src: URL.createObjectURL(blob), default: true }, false);
-    }
+document.getElementById("sub").onchange = e => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = ev => {
+    subText = file.name.endsWith(".srt")
+      ? "WEBVTT\n\n" + ev.target.result.replace(/,/g, ".")
+      : ev.target.result;
+  };
+  reader.readAsText(file);
+};
+
+function start() {
+  const name = document.getElementById("name").value;
+  const movie = document.getElementById("movie").value;
+
+  if (!name) return alert("اكتب اسمك");
+
+  socket.emit("join-room", {
+    roomId,
+    name,
+    movieUrl: movie || null,
+    subContent: subText || null
+  });
+
+  document.getElementById("setup").style.display = "none";
+  document.getElementById("app").style.display = "flex";
 }
 
-function startParty() {
-    const name = document.getElementById('user-name').value;
-    const movieUrl = document.getElementById('movie-url').value;
-    if (!name) return alert("أدخل اسمك!");
-    localStorage.setItem("userName", name);
+function initPlayer(url, sub, state) {
+  player.src({ src: url, type: "video/mp4" });
 
-    if (!roomId) {
-        roomId = Math.random().toString(36).substring(7);
-        window.history.pushState({}, '', `?room=${roomId}`);
-        socket.emit("join-room", { roomId, movieUrl, subContent });
-    } else {
-        socket.emit("join-room", { roomId });
-    }
-    document.getElementById('setup-container').style.display = 'none';
+  if (sub) {
+    const blob = new Blob([sub], { type: "text/vtt" });
+    player.addRemoteTextTrack({
+      kind: "captions",
+      label: "Arabic",
+      src: URL.createObjectURL(blob),
+      default: true
+    });
+  }
+
+  player.ready(() => {
+    player.currentTime(state.time || 0);
+    if (state.playing) player.play();
+  });
 }
 
-function sendMessage() {
-    const input = document.getElementById("msg");
-    if (input.value.trim()) {
-        socket.emit("chat", { roomId, message: input.value, user: localStorage.getItem("userName") });
-        input.value = "";
-    }
+// مزامنة
+player.ready(() => {
+  player.on("play", () => {
+    if (!isRemote)
+      socket.emit("play", { roomId, time: player.currentTime() });
+  });
+
+  player.on("pause", () => {
+    if (!isRemote)
+      socket.emit("pause", { roomId, time: player.currentTime() });
+  });
+
+  player.on("seeked", () => {
+    if (!isRemote)
+      socket.emit("seek", { roomId, time: player.currentTime() });
+  });
+});
+
+socket.on("play", t => {
+  isRemote = true;
+  player.currentTime(t);
+  player.play().finally(() => (isRemote = false));
+});
+
+socket.on("pause", t => {
+  isRemote = true;
+  player.pause();
+  isRemote = false;
+});
+
+socket.on("seek", t => {
+  isRemote = true;
+  player.currentTime(t);
+  isRemote = false;
+});
+
+// الشات
+function sendMsg(e) {
+  e.preventDefault();
+  const input = document.getElementById("msg");
+  if (!input.value.trim()) return;
+
+  socket.emit("chat", {
+    roomId,
+    user: document.getElementById("name").value,
+    message: input.value
+  });
+
+  input.value = "";
 }
 
 socket.on("chat", d => {
-    const item = `<div class="msg-item"><strong>${d.user}:</strong> ${d.message}</div>`;
-    document.getElementById("messages").innerHTML += item;
-    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+  const div = document.createElement("div");
+  div.className = "msg";
+  div.innerHTML = `<b>${d.user}</b>: ${d.message}`;
+  document.getElementById("messages").appendChild(div);
 });

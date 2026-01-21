@@ -1,61 +1,75 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { 
-    background: #000; 
-    font-family: sans-serif; 
-    height: 100vh; /* للحاسبة */
-    height: 100svh; /* للموبايل تحسب حساب الكيبورد */
-    overflow: hidden; 
-    display: flex; 
-    flex-direction: column; 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: sans-serif; }
+
+#setup {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#setup-container { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.setup-box { background: #111; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; }
-.setup-box input { width: 100%; padding: 12px; margin: 8px 0; background: #222; border: 1px solid #444; color: white; border-radius: 8px; }
-.setup-box button { width: 100%; padding: 12px; background: #e50914; border: none; color: white; border-radius: 8px; font-weight: bold; }
-
-#main-app { display: flex; flex-direction: column; flex: 1; height: 100%; }
-
-/* الفيديو ياخذ مساحة أقل حتى يبقى مكان للشات */
-.video-section { height: 35vh; width: 100%; background: #000; flex-shrink: 0; }
-.video-js { width: 100% !important; height: 100% !important; }
-
-.chat-section { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    background: #111; 
-    border-top: 2px solid #333;
-    min-height: 0; /* مهم جداً للمزامنة مع الكيبورد */
+.box {
+  background: #111;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  text-align: center;
 }
 
-#messages { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-.msg-item { background: #222; padding: 8px; border-radius: 8px; max-width: 85%; align-self: flex-start; font-size: 14px; }
-.msg-item strong { color: #e50914; margin-left: 5px; }
-
-/* حقل الإدخال - رفعناه شوية وضبطنا مكانه */
-.input-area { 
-    padding: 10px; 
-    background: #000; 
-    display: flex; 
-    gap: 8px; 
-    border-top: 1px solid #222;
+.box input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
 }
 
-#msg { 
-    flex: 1; 
-    padding: 10px; 
-    background: #222; 
-    border: 1px solid #333; 
-    color: white; 
-    border-radius: 20px; /* سويته مدور ارتب */
-    font-size: 16px; 
+button {
+  background: #e50914;
+  color: white;
+  cursor: pointer;
 }
 
-.input-area button { background: #e50914; border: none; padding: 0 15px; color: white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+#app {
+  display: none;
+  height: 100vh;
+}
+
+.video-section { background: #000; }
+.chat-section {
+  background: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+#messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.msg {
+  background: #222;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+form {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+}
+
+form input {
+  flex: 1;
+}
 
 @media (min-width: 768px) {
-    #main-app { flex-direction: row; }
-    .video-section { height: 100vh; flex: 3; }
-    .chat-section { height: 100vh; flex: 1; border-top: none; border-left: 2px solid #333; }
+  #app { flex-direction: row; display: flex; }
+  .video-section { flex: 6; }
+  .chat-section { flex: 4; }
 }

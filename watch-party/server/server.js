@@ -1,45 +1,60 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: { origin: "*" }
+});
 
 const rooms = {};
 
-io.on("connection", (socket) => {
-    socket.on("join-room", ({ roomId, movieUrl, subContent }) => {
-        socket.join(roomId);
-        if (!rooms[roomId]) {
-            rooms[roomId] = { movieUrl, subContent, time: 0, playing: false };
-        }
-        socket.emit("sync-state", rooms[roomId]);
-    });
+io.on("connection", socket => {
 
-    socket.on("play", (data) => {
-        if (rooms[data.roomId]) {
-            rooms[data.roomId].playing = true;
-            socket.to(data.roomId).emit("play", data.time);
-        }
-    });
+  socket.on("join-room", ({ roomId, name, movieUrl, subContent }) => {
+    socket.join(roomId);
 
-    socket.on("pause", (data) => {
-        if (rooms[data.roomId]) {
-            rooms[data.roomId].playing = false;
-            socket.to(data.roomId).emit("pause", data.time);
-        }
-    });
+    // أول شخص
+    if (!rooms[roomId]) {
+      rooms[roomId] = {
+        movieUrl,
+        subContent,
+        time: 0,
+        playing: false
+      };
+    }
 
-    socket.on("seek", (data) => {
-        if (rooms[data.roomId]) {
-            rooms[data.roomId].time = data.time;
-            socket.to(data.roomId).emit("seek", data.time);
-        }
-    });
+    socket.emit("sync-state", rooms[roomId]);
 
-    socket.on("chat", (data) => {
-        io.to(data.roomId).emit("chat", { user: data.user, message: data.message });
-    });
+    socket.to(roomId).emit("system", `${name} انضم للحفلة`);
+  });
+
+  socket.on("play", ({ roomId, time }) => {
+    if (!rooms[roomId]) return;
+    rooms[roomId].playing = true;
+    rooms[roomId].time = time;
+    socket.to(roomId).emit("play", time);
+  });
+
+  socket.on("pause", ({ roomId, time }) => {
+    if (!rooms[roomId]) return;
+    rooms[roomId].playing = false;
+    rooms[roomId].time = time;
+    socket.to(roomId).emit("pause", time);
+  });
+
+  socket.on("seek", ({ roomId, time }) => {
+    if (!rooms[roomId]) return;
+    rooms[roomId].time = time;
+    socket.to(roomId).emit("seek", time);
+  });
+
+  socket.on("chat", data => {
+    io.to(data.roomId).emit("chat", data);
+  });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log("Server Active"));
+server.listen(process.env.PORT || 3000, () =>
+  console.log("Server running")
+);
