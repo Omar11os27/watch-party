@@ -18,15 +18,16 @@ io.on("connection", (socket) => {
                 subContent: subContent || "" 
             };
         }
+        // إرسال البيانات فوراً للشخص الجديد (حتى يشتغل الفيديو عنده)
         socket.emit("sync-state", rooms[roomId]);
     });
 
     socket.on("play", ({ roomId, time }) => {
-        if (rooms[roomId]) { rooms[roomId].playing = true; socket.to(roomId).emit("play", time); }
+        if (rooms[roomId]) { rooms[roomId].playing = true; rooms[roomId].time = time; socket.to(roomId).emit("play", time); }
     });
 
     socket.on("pause", ({ roomId, time }) => {
-        if (rooms[roomId]) { rooms[roomId].playing = false; socket.to(roomId).emit("pause", time); }
+        if (rooms[roomId]) { rooms[roomId].playing = false; rooms[roomId].time = time; socket.to(roomId).emit("pause", time); }
     });
 
     socket.on("seek", ({ roomId, time }) => {
@@ -40,4 +41,4 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log("Server Live!"));
+server.listen(process.env.PORT || 3000, () => console.log("Server Running!"));
