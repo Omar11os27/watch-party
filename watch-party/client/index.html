@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Party Pro | Anbar Univ</title>
+    <title>Watch Party Pro</title>
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="setup-container">
         <div class="setup-box">
             <h1>🎬 Watch Party Pro</h1>
-            <input type="text" id="user-name" placeholder="أدخل اسمك...">
-            <input type="text" id="movie-url" placeholder="رابط الفيلم المباشر...">
-            <input type="file" id="sub-file" accept=".vtt,.srt" style="margin: 10px 0; color: #aaa;">
-            <button onclick="startParty()">ابدأ الآن</button>
+            <p>أنشئ غرفة وشاهد مع أصدقائك</p>
+            <input type="text" id="user-name" placeholder="أدخل اسمك المستعار...">
+            <input type="text" id="movie-url" placeholder="الصق رابط الفيديو المباشر...">
+            
+            <div class="file-upload">
+                <label for="sub-file">📁 ارفع ملف الترجمة (SRT/VTT)</label>
+                <input type="file" id="sub-file" accept=".vtt,.srt">
+                <span id="file-name">لم يتم اختيار ملف</span>
+            </div>
+
+            <button onclick="startParty()">ابدأ السهرة الآن</button>
         </div>
     </div>
 
     <div id="main-app" style="display: none;">
-        <div class="video-section">
-            <video id="my-video" controls playsinline crossorigin="anonymous"></video>
+        <div class="video-container">
+            <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
         </div>
-        <div class="chat-section">
+        <div id="chat-container">
             <div id="messages"></div>
             <form class="input-area" onsubmit="event.preventDefault(); sendMessage();">
                 <input id="msg" type="text" placeholder="اكتب رسالة..." autocomplete="off">
@@ -30,6 +39,7 @@
         </div>
     </div>
 
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="client.js"></script>
 </body>
