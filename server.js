@@ -17,7 +17,7 @@ app.set("view engine", "ejs");
 
 //Routes
 app.get("/", (req, res) => {
-    res.render('name')
+    res.render('username')
 })
 
 app.get("/chat", (req, res) => {
