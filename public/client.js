@@ -20,7 +20,7 @@ window.addEventListener('load', ()=>{
     socket.on('msg', (msg)=>{
         let username =  localStorage.getItem("username");
         msgcon.innerHTML += `
-            <div><h3>${username}</h3> <p class="msg">${msg}</p></div>
+            <div><h3>${username}</h3> <p style="border: 1px solid black; padding: 5px; background-color: lightgreen;">${msg}</p></div>
         `
     })
 
