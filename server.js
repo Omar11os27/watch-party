@@ -29,7 +29,8 @@ io.on('connection', (socket)=>{
     console.log('new connection', socket.id)
 
     socket.on('msg', (msg)=>{
-        io.emit('msg', (msg))
+        let username = localStorage.getItem("username");
+        io.emit('msg', (msg,username))
     })
 
     socket.on('disconnect', ()=>{

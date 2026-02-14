@@ -17,8 +17,7 @@ window.addEventListener('load', ()=>{
         socket.emit('msg', msg)
     })
 
-    socket.on('msg', (msg)=>{
-        let username =  localStorage.getItem("username");
+    socket.on('msg', (msg,username)=>{
         msgcon.innerHTML += `
             <div><h3>${username}</h3> <p style="border: 1px solid black; padding: 5px; background-color: lightgreen;">${msg}</p></div>
         `
