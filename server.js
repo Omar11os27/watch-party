@@ -30,7 +30,10 @@ io.on('connection', (socket)=>{
 
     socket.on('msg', (msg)=>{
         let username = localStorage.getItem("username");
-        io.emit('msg', (msg,username))
+        msg = `
+            <div><h3>${username}</h3> <p style="border: 1px solid black; padding: 5px; background-color: lightgreen;">${msg}</p></div>
+        `
+        io.emit('msg', (msg))
     })
 
     socket.on('disconnect', ()=>{
