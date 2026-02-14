@@ -15,7 +15,11 @@ http.listen(port, () => {
 //view engine setup 
 app.set("view engine", "ejs");
 
-//Routes 
+//Routes
+app.get("/", (req, res) => {
+    res.render('name')
+})
+
 app.get("/chat", (req, res) => {
     res.render('home')
 })
@@ -25,8 +29,7 @@ io.on('connection', (socket)=>{
     console.log('new connection', socket.id)
 
     socket.on('msg', (msg)=>{
-        let msgshow = `<h3>${socket.id}</h3> msg: ${msg}`;
-        io.emit('msg', (msgshow))
+        io.emit('msg', (msg))
     })
 
     socket.on('disconnect', ()=>{
