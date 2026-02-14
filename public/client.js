@@ -6,8 +6,7 @@ window.addEventListener('load', ()=>{
     const msginput = document.querySelector('#msginput')
     const msgform = document.querySelector('#msgform')
     const msgcon = document.querySelector('#msgcon')
-    const tochat = document.querySelector('#tochat')
-    const name = document.querySelector('#name')
+    
 
     msgform.addEventListener('submit', (e)=>{
         e.preventDefault()
@@ -25,9 +24,6 @@ window.addEventListener('load', ()=>{
         `
     })
 
-    tochat.addEventListener('click', ()=>{
-        localStorage.setItem("username", name.value);
-        window.location.href = `${mainPath}/chat`
-    })
+    
     
 })
