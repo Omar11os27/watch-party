@@ -28,8 +28,7 @@ app.get("/chat", (req, res) => {
 io.on('connection', (socket)=>{
     console.log('new connection', socket.id)
 
-    socket.on('msg', (msg)=>{
-        let username = localStorage.getItem("username");
+    socket.on('msg', (msg,username)=>{
         msg = `
             <div><h3>${username}</h3> <p style="border: 1px solid black; padding: 5px; background-color: lightgreen;">${msg}</p></div>
         `

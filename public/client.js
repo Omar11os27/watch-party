@@ -1,6 +1,7 @@
 window.addEventListener('load', ()=>{
     const mainPath = "https://watch-party-v2gx.onrender.com";
     const socket = io(mainPath)
+    // const socket = io()
 
     // html element
     const msginput = document.querySelector('#msginput')
@@ -13,8 +14,9 @@ window.addEventListener('load', ()=>{
         let msg = msginput.value
         msginput.value = ""
 
+        let username = localStorage.getItem("username");
         // send
-        socket.emit('msg', msg)
+        socket.emit('msg', msg,username)
     })
 
     socket.on('msg', (msg)=>{
