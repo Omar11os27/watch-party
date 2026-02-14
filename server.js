@@ -25,7 +25,8 @@ io.on('connection', (socket)=>{
     console.log('new connection', socket.id)
 
     socket.on('msg', (msg)=>{
-        io.emit('msg', (msg,socket.id))
+        let msgshow = `<h3>${socket.id}</h3> msg: ${msg}`;
+        io.emit('msg', (msgshow))
     })
 
     socket.on('disconnect', ()=>{

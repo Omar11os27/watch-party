@@ -16,9 +16,9 @@ window.addEventListener('load', ()=>{
         socket.emit('msg', msg)
     })
 
-    socket.on('msg', (msg,userid)=>{
+    socket.on('msg', (msg)=>{
         msgcon.innerHTML += `
-            <div><h2>${userid}</h2> : ${msg}</div>
+            <div>${msg}</div>
         `
     })
     
