@@ -17,7 +17,7 @@ const io = new Server(server, {
   }
 });
 
-const port = 8000
+const port = process.env.PORT || 8000
 // start server
 // ipv4 10.229.50.248 (cmd ipconfig)
 server.listen(port,'0.0.0.0', () => {
