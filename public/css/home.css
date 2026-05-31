@@ -1,0 +1,251 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    --col1: #4A2828;
+    --col2: #DBDBDB;
+    --bgcol1: #B99493;
+    --bgcol2: #5F3A33;
+    --fontcol: #FFFEFE;
+}
+
+.quscon{
+    /* transform: translateY(); */
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient( to right bottom,var(--bgcol1), var(--bgcol2));
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.score{
+    width: 100%;
+    height: 14%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    z-index: 2;
+}
+
+.team{
+    width: 100%;
+    height: 100%;
+    background-color: var(--col1);
+    border: solid 4px var(--col2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    color: var(--fontcol);
+    text-shadow: 1px 1px 20px;
+}
+.teamA{
+    border-right: 0;
+}
+.teamB{
+    border-left: 0;
+}
+
+
+.shape{
+    width: 100%;
+}
+
+.bgShape{
+    width: 690px;
+    height: 690px;
+    position: absolute;
+    z-index: 1;
+    top: 12%;
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bgShape img{
+    width: 100%;
+    opacity: 50%;
+}
+
+
+
+.shadowQus{
+    /* background-color: #00a100; */
+    width: 810px;
+    height: 20px;
+    box-shadow: 0px 18px 20px white;
+    position: absolute;
+    top: 190px;
+    z-index: 0;
+}
+.qus{
+    position: relative;
+    margin: 3px 0 20px 0;
+    width: 900px;
+    height: 100px;
+    background-color: var(--col2);
+    z-index: 10;
+}
+
+.bgqus{
+    width: 98%;
+    height: 90%;
+    background-color: var(--col1);
+    padding: 0 40px;
+}
+.text{
+    text-align: center;
+    font-size: 36px;
+    color: var(--fontcol);
+    text-shadow: 1px 1px 20px;
+}
+
+
+.ops{
+    width: 90%;
+    display: grid;
+    grid-template-columns: auto auto;
+    z-index: 10;
+    /* border: 1px solid red; */
+    justify-content: center;
+    gap: 63px 180px;
+    position: absolute;
+    top: 42%;
+}
+
+.op{
+    width: 450px;
+    height: 85px;
+    font-size: 42px;
+    text-align: center;
+    background-color: var(--col2);
+}
+/* 
+red #9e3232 
+green #329e32
+*/
+.bgop{
+    width: 97%;
+    height: 90%;
+    background-color: var(--col1);
+}
+/* help style */
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.clip{
+    clip-path: polygon(5% 0%, 95% 0%, 99% 50%, 95% 100%, 5% 100%, 1% 50%);
+}
+/* help style */
+
+
+
+
+.middle{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.teamicon{
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 19.4%;
+}
+.teamicon img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.teamAicon{
+    position: absolute;
+    right: 6%;
+    background-color: white;
+    box-shadow: 1px 1px 20px white;
+}
+.teamBicon{
+    position: absolute;
+    left: 6%;
+    box-shadow: 0px 0px 20px white;
+}
+
+.countQus{
+    width: 100px;
+    height: 30px;
+    border-radius: 30px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--fontcol);
+    background-color: var(--col1);
+    border: 2px solid var(--col2);
+    text-shadow: 1px 1px 20px;
+    margin-top: 3px;
+}
+
+
+/* new timer */
+
+.conTimer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  /* border: 1px red solid; */
+  position: absolute;
+  top: 50.4%;
+  left: 44.5%;
+  z-index: 10;
+}
+
+.progress {
+    /* stroke-dasharray = 2*r*3.14  */
+    stroke-dasharray: 285; 
+    stroke-dashoffset: 0; /* هنا مخفية تماماً */
+    stroke: #1c7700;
+    stroke-linecap: round; /* يسوي حواف الدائرة دائرية ومرتبة */
+    transform: rotate(-90deg); /* يخليها تبدي من فوك */
+    transform-origin: center;
+  
+}
+
+.move{
+  animation: fillProgress 15s linear forwards;
+}
+
+.number{
+  position: absolute;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+@keyframes fillProgress {
+  to {
+    stroke-dashoffset: 285; /* هنا تصير الدائرة كاملة */
+  }
+}
+
+.timerShadow {
+  filter: drop-shadow(1px 1px 10px white);
+}
+
+/* result iframe */
+.Page{
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+}
