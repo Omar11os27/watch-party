@@ -1,5 +1,4 @@
 const express = require('express');
-const { glob } = require('fs');
 const http = require('http'); 
 const { Server } = require("socket.io");
 
@@ -17,15 +16,10 @@ const io = new Server(server, {
   }
 });
 
-const port = process.env.PORT || 8000
-// start server
-// ipv4 10.229.50.248 (cmd ipconfig)
-server.listen(port,'0.0.0.0', () => {
-    console.log(`listening on port ${port}`)
-})
 
 //view engine setup 
 app.set("view engine", "ejs");
+
 
 //Routes
 app.get("/", (req, res) => {
@@ -130,28 +124,7 @@ io.on('connection', (socket)=>{
 
 
 
-    // Timer
-    socket.on('timer',async ()=>{
-
-        time = global.time //timer value
-        clearInterval(timeInterval)
-      
-        timeInterval = setInterval(() => {
-            if(time < 0){
-                clearInterval(timeInterval)
-            }else{
-                socket.broadcast.emit('showTime', {time: time})
-                if(time != 0){
-                    time--
-                }else{
-                    global.timer = false
-                    global.canNext = true
-                }
-            }
-        }, 1000);
-
-    })
-
+    
     socket.on('disconnect', ()=>{
         console.log('disconnect:', socket.id)
     })
@@ -159,3 +132,11 @@ io.on('connection', (socket)=>{
 })//end connection
 
 
+
+
+
+const port = process.env.PORT || 8000
+
+server.listen(port, () => {
+    console.log(`listening on port ${port}`)
+})
