@@ -115,6 +115,54 @@ video.addEventListener('seeked', ()=>{
 })
 
 
+//subtitle
+const subBox = document.getElementById('subBox');
+const srtUrl = "/subtitles/distant.srt";
+
+let subtitles = [];
+
+// تحميل وقراءة الملف
+fetch(srtUrl)
+    // هنا السحر: نحول الملف إلى Blob وبعدين نقراه بترميز عربي صحيح
+    .then(response => response.blob())
+    .then(blob => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const srtContent = e.target.result;
+            
+            // تشغيل المكتبة لتفكيك الملف بعد ما انقره صح
+            subtitles = Subtitle.parse(srtContent);
+            console.log("الترجمة جاهزة ومفهومة:", subtitles);
+        };
+        
+        // جرب أول شي windows-1256 (هو الأغلب لملفات الـ SRT العربية)
+        reader.readAsText(blob, 'windows-1256'); 
+        
+        // 💡 ملاحظة: إذا جربت وطلعت بعده شخابيط، بس بدل 'windows-1256' الفوق وسويها 'utf-8'
+    })
+    .catch(err => console.error("خطأ في تحميل ملف الترجمة:", err));
+// تحديث الكلام وية مشي الفيديو
+video.addEventListener('timeupdate', () => {
+    // نحول وقت الفيديو الحالي إلى ملي ثانية
+    const currentTimeMs = video.currentTime * 1000;
+
+    // نبحث عن السطر المناسب للوقت الحالي (بالنسخة v2 الكائن يرجع كـ start و end مباشرة داخل الـ item)
+    const currentCue = subtitles.find(item => 
+        currentTimeMs >= item.start && 
+        currentTimeMs <= item.end
+    );
+
+    if (currentCue) {
+        subBox.innerHTML = currentCue.text;
+    } else {
+        subBox.innerHTML = "";
+    }
+});
+//end subtitle
+
+
+
+
 //functions
 function goto(m,s){
     let totalSeconds = (m * 60) + s;        
