@@ -17,6 +17,7 @@
     max-width: 800px;
     margin: 0 auto;
     height: 40vh;
+    flex-shrink: 0;
 }
 
 .video-container video{
