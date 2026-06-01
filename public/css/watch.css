@@ -60,11 +60,11 @@
 .inputmsg{
     /* position: sticky; */
     /* bottom: 0; */
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(70, 70, 70, 0.25);
     border: 0;
     padding: 10px;
     color: white;
-    width: 70%;
+    width: 60%;
 }
 .inputmsg:focus{
     position: absolute;
@@ -79,20 +79,22 @@
     background-color: limegreen;
 }
 
-.async{
-    color: dodgerblue;
-}
+
 .async, .master, .sendmsg{
-    width: 10%;
+    width: 8%;
     border-radius: 5px;
     border: 0;
     font-size: 18px;
     font-weight: bold;
 }
+.async{
+    width: 12%;
+    background-color: dodgerblue;
+}
 
-/* .async:hover, .master:hover, .sendmsg:hover{
+.async:hover, .master:hover, .sendmsg:hover{
     opacity: 30%;
-} */
+}
 
 .msg{
     padding: 10px;
@@ -101,6 +103,7 @@
     margin: 5px 0;
 }
 .name{
+    font-size: 14px;
     margin: 3px 5px;
     color: green;
 }

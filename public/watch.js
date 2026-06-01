@@ -1,3 +1,5 @@
+const srtUrl = "/subtitles/distant.srt";
+
 // window.location.href = `name page`
 // const socket = io('https://watch-party-v2gx.onrender.com')
 const socket = io()
@@ -44,6 +46,7 @@ inputmsg.addEventListener('keydown', (e)=>{
 sendmsg.addEventListener('click', ()=>{
     let msg = inputmsg.value
     inputmsg.value = ''
+    if(msg == '') return
 
     if(msg == '/url'){
         let url = prompt('enter url: ')
@@ -54,7 +57,7 @@ sendmsg.addEventListener('click', ()=>{
 
     msglist.innerHTML += `
         <div class="msg">
-            <h2 class="name">name</h2>
+            <h2 class="name">انت</h2>
             <p class="text">${msg}</p>
         </div>
     `
@@ -67,7 +70,7 @@ socket.on('sendmsg', (data)=>{
 
     msglist.innerHTML += `
         <div class="msg leftmsg friendBg">
-            <h2 class="name friendname">name</h2>
+            <h2 class="name friendname">صديقك</h2>
             <p class="text">${msg}</p>
         </div>
     `
@@ -130,7 +133,7 @@ video.addEventListener('seeked', ()=>{
 
 //subtitle
 const subBox = document.getElementById('subBox');
-const srtUrl = "/subtitles/distant.srt";
+
 
 let subtitles = [];
 
