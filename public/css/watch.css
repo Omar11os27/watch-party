@@ -27,10 +27,10 @@
 }
 
 #subBox{
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.25);
     position: absolute;
     z-index: 10;
-    top: 40%;
+    top: 30%;
     right: 10%;
     max-width: 80%;
     padding: 5px;
@@ -79,6 +79,9 @@
     background-color: limegreen;
 }
 
+.async{
+    color: dodgerblue;
+}
 .async, .master, .sendmsg{
     width: 10%;
     border-radius: 5px;
@@ -87,9 +90,9 @@
     font-weight: bold;
 }
 
-.async:hover, .master:hover, .sendmsg:hover{
+/* .async:hover, .master:hover, .sendmsg:hover{
     opacity: 30%;
-}
+} */
 
 .msg{
     padding: 10px;

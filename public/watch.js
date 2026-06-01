@@ -36,6 +36,9 @@ inputmsg.addEventListener('keydown', (e)=>{
     if(e.key == 'Enter'){
         e.preventDefault()
         sendmsg.click()
+        inputmsg.blur();
+        let lastmsg = msglist.lastElementChild
+        lastmsg.scrollIntoView({ behavior: 'smooth' });
     }
 })
 sendmsg.addEventListener('click', ()=>{
