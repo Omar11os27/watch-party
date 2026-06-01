@@ -68,7 +68,7 @@
 }
 .inputmsg:focus{
     position: absolute;
-    top: 50%;
+    top: 40%;
 }
 /* .focus{
     position: absolute;

@@ -32,6 +32,12 @@ master.addEventListener('click', ()=>{
 })
 
     //send msg and newURL
+inputmsg.addEventListener('keydown', (e)=>{
+    if(e.key == 'Enter'){
+        e.preventDefault()
+        sendmsg.click()
+    }
+})
 sendmsg.addEventListener('click', ()=>{
     let msg = inputmsg.value
     inputmsg.value = ''
