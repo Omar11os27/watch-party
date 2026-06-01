@@ -114,6 +114,10 @@ video.addEventListener('seeked', ()=>{
     socket.emit('howTimeAll')
 })
 
+// inputmsg.addEventListener('focus', ()=>{
+//     let div = document.querySelector('.msgInput')
+//     div.classList +='focus'
+// })
 
 //subtitle
 const subBox = document.getElementById('subBox');

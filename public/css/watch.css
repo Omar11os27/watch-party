@@ -11,16 +11,13 @@
     align-items: center;    
     background-color: rgb(16, 16, 20);
     height: 100dvh;
-    overflow: hidden;
 }
 
 .video-container{
-    position: relative;
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    height: 40dvh;
-    flex-shrink: 0;
+    height: 40vh;
 }
 
 .video-container video{
@@ -30,30 +27,30 @@
 }
 
 #subBox{
-    background-color: rgba(0, 0, 0, 0.75); /* خففته الك شوي حتى يطلع أرتب */
+    background-color: black;
     position: absolute;
     z-index: 10;
-    bottom: 5%;           /* 🌟 غيرها من top: 40% إلى bottom: 5% حتى يثبت أسفل الفيديو */
-    left: 50%;            /* 🌟 أضف هذا */
-    transform: translateX(-50%); /* 🌟 أضف هذا حتى يقعد بالسنتر فيت */
+    top: 40%;
+    right: 10%;
     max-width: 80%;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 5px;
 }
 
 .chat{
     width: 100%;
     max-width: 800px;
+    /* height: 60%; */
+
     display: flex;
     flex-direction: column;
-    flex: 1;
-
+    height: 60dvh;
 }
 .msglist{
     flex: 1;
 
     border: 1px solid black;
     width: 100%;
+    height: 250px;
 
     overflow-y: auto;
     overflow-x: hidden;
@@ -61,14 +58,23 @@
 
 
 .inputmsg{
-    position: sticky;
-    bottom: 0;
+    /* position: sticky; */
+    /* bottom: 0; */
     background-color: rgba(0, 0, 0, 0.25);
     border: 0;
     padding: 10px;
     color: white;
     width: 70%;
 }
+.inputmsg:focus{
+    position: absolute;
+    top: 50%;
+}
+/* .focus{
+    position: absolute;
+    top: 50%;
+} */
+
 .sendmsg{
     background-color: limegreen;
 }
