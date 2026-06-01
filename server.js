@@ -86,16 +86,16 @@ io.on('connection', (socket)=>{
      
     
     socket.on('play', ()=>{
-        io.emit('play')
-        clearInterval(interval)
-        interval = setInterval(()=>{
-            io.emit('getCurTime', {all: true});
-        }, 3000)
+        socket.broadcast.emit('play')
+        // clearInterval(interval)
+        // interval = setInterval(()=>{
+        //     io.emit('getCurTime', {all: true});
+        // }, 3000)
     })
 
     socket.on('pause', ()=>{
-        clearInterval(interval)
-        io.emit('pause')
+        // clearInterval(interval)
+        socket.broadcast.emit('pause')
     })
 
 

@@ -1,5 +1,6 @@
 // window.location.href = `name page`
 const socket = io('https://watch-party-v2gx.onrender.com')
+// const socket = io()
 
 //varible
 const url = 'https://cdn.shabakaty.com/vascin24-mp4/C81F5AD3-D3E9-4617-8EC2-F9FEFD923833_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22video.mp4%22&AWSAccessKeyId=PSFBSAZRKNBJOAMKHHBIBOBEONKBBOPKEDDBFBOJCH&Expires=1780608755&Signature=EaNRjmEDHmpd2cHXLYntkG4Sbj4%3D'
@@ -13,6 +14,8 @@ video.src = url
 //global storage
 let client = {
     id: 0,
+    master: false,
+
 }
 
 //sockets
@@ -21,6 +24,7 @@ socket.on('myID', (data)=>{
 })
     //send master id
 master.addEventListener('click', ()=>{
+    client.master = true
     socket.emit('master')
 })
 
@@ -49,6 +53,7 @@ socket.on('setCurTime', (data)=>{
 
     //play
 video.addEventListener('play', ()=>{
+    if(!client.master) return
     socket.emit('play')
 })
 socket.on('play', ()=>{
@@ -56,6 +61,7 @@ socket.on('play', ()=>{
 })
     //pause
 video.addEventListener('pause', ()=>{
+    if(!client.master) return
     socket.emit('pause')
 })
 socket.on('pause', ()=>{
@@ -63,6 +69,7 @@ socket.on('pause', ()=>{
 })
 
 video.addEventListener('seeked', ()=>{
+    if(!client.master) return
     socket.emit('howTimeAll')
 })
 
