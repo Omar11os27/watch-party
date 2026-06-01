@@ -1,0 +1,106 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.con{
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    background-color: rgb(16, 16, 20);
+}
+
+.video-container{
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 40vh;
+}
+
+.video-container video{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.chat{
+    width: 100%;
+    max-width: 800px;
+    /* height: 60%; */
+
+    display: flex;
+    flex-direction: column;
+    height: 60dvh;
+}
+.msglist{
+    flex: 1;
+
+    border: 1px solid black;
+    width: 100%;
+    height: 250px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.inputmsg{
+    position: sticky;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 0;
+    padding: 5px;
+    color: white;
+    width: 70%;
+}
+.sendmsg{
+    background-color: limegreen;
+}
+
+.async, .master, .sendmsg{
+    width: 10%;
+    border-radius: 5px;
+    border: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.async:hover, .master:hover, .sendmsg:hover{
+    opacity: 30%;
+}
+
+.msg{
+    padding: 10px;
+    background-color: rgba(255, 0, 0, 0.25);
+    border-radius: 20px;
+    margin: 5px 0;
+}
+.name{
+    margin: 3px 5px;
+    color: green;
+}
+.text{
+    font-size: 18px;
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
+.msgInput{
+    display: flex;
+    justify-content: center;
+}
+.msgInput button{
+    color: black;
+}
+
+.leftmsg{
+    text-align: left;
+}
+.friendname{
+    color: #008060;
+}
+.friendBg{
+    background-color: rgba(255, 0, 76, 0.25);
+}

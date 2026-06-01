@@ -99,6 +99,21 @@ io.on('connection', (socket)=>{
     })
 
 
+        //chat msg
+    socket.on('sendmsg', (data)=>{
+        let msg = data.msg
+        socket.broadcast.emit('sendmsg', {msg: msg})
+    })
+        //'newURL'
+    socket.on('newURL', (data)=>{
+        let url = data.url
+        socket.broadcast.emit('newURL', {url: url})
+    })
+
+
+
+
+
 
 
 

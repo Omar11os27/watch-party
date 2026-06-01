@@ -1,16 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="/css/watch.css">
+    <title>video with friends</title>
 </head>
 <body>
-    <video class="video" controls></video>
+    <div class="con">
+        <div class="video-container">
+            <video class="video" controls></video>
+        </div>
 
-    <button class="master">master</button>
-    <button class="async">async</button>
-
+        
+        <div class="chat">
+            <div class="msglist">
+                <div class="msg">
+                    <h4 class="name" style="color: darkorange;">النظام</h4>
+                    <p class="text">يمكن المشاهدة مع الاصدقاء والدردشة</p>
+                </div>
+                
+            </div>
+            <div class="msgInput">
+                <button class="sendmsg">></button>
+                <input class="inputmsg" type="text">
+                
+                <button class="master">master</button>
+                <button class="async">async</button>
+            </div>
+        </div>
+        
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/watch.js"></script>

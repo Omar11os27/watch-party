@@ -1,15 +1,18 @@
 // window.location.href = `name page`
-const socket = io('https://watch-party-v2gx.onrender.com')
-// const socket = io()
+// const socket = io('https://watch-party-v2gx.onrender.com')
+const socket = io()
 
 //varible
-const url = 'https://cdn.shabakaty.com/vascin24-mp4/C81F5AD3-D3E9-4617-8EC2-F9FEFD923833_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22video.mp4%22&AWSAccessKeyId=PSFBSAZRKNBJOAMKHHBIBOBEONKBBOPKEDDBFBOJCH&Expires=1780608755&Signature=EaNRjmEDHmpd2cHXLYntkG4Sbj4%3D'
+const defualturl = 'https://cdn.shabakaty.com/vascin24-mp4/C81F5AD3-D3E9-4617-8EC2-F9FEFD923833_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22video.mp4%22&AWSAccessKeyId=PSFBSAZRKNBJOAMKHHBIBOBEONKBBOPKEDDBFBOJCH&Expires=1780608755&Signature=EaNRjmEDHmpd2cHXLYntkG4Sbj4%3D'
 const video = document.querySelector('.video')
 const master = document.querySelector('.master')
 const async = document.querySelector('.async')
+const msglist = document.querySelector('.msglist')
+const inputmsg = document.querySelector('.inputmsg')
+const sendmsg = document.querySelector('.sendmsg')
 
 //startup
-video.src = url
+video.src = defualturl
 
 //global storage
 let client = {
@@ -26,6 +29,44 @@ socket.on('myID', (data)=>{
 master.addEventListener('click', ()=>{
     client.master = true
     socket.emit('master')
+})
+
+    //send msg and newURL
+sendmsg.addEventListener('click', ()=>{
+    let msg = inputmsg.value
+    inputmsg.value = ''
+
+    if(msg == '/url'){
+        let url = prompt('enter url: ')
+        video.src = url
+        socket.emit('newURL', {url: url})
+        return
+    }
+
+    msglist.innerHTML += `
+        <div class="msg">
+            <h2 class="name">name</h2>
+            <p class="text">${msg}</p>
+        </div>
+    `
+    let lastmsg = msglist.lastElementChild
+    lastmsg.scrollIntoView({ behavior: 'smooth' });
+    socket.emit('sendmsg', {msg: msg})
+})
+socket.on('sendmsg', (data)=>{
+    let msg = data.msg
+
+    msglist.innerHTML += `
+        <div class="msg leftmsg friendBg">
+            <h2 class="name friendname">name</h2>
+            <p class="text">${msg}</p>
+        </div>
+    `
+    let lastmsg = msglist.lastElementChild
+    lastmsg.scrollIntoView({ behavior: 'smooth' });
+})
+socket.on('newURL', (data)=>{
+    video.src = data.url
 })
 
 async.addEventListener('click', ()=>{
