@@ -169,6 +169,12 @@
     /* width: 95%; */
     border-radius: 20px;
 }
+.msgReChat:hover{
+    background-color: rgba(255, 148, 148, 0.637);
+}
+.fulltext{
+    visibility: hidden;
+}
 .reChatfriend{
     background-color: rgba(255, 0, 76, 0.637);
 }

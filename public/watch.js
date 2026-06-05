@@ -23,7 +23,8 @@ let client = {
     id: 0,
     master: false,
     reChat: false,
-
+    subtitle: false,
+    isLoadSubtitle: false,
 }
 
 //sockets
@@ -47,6 +48,7 @@ inputmsg.addEventListener('keydown', (e)=>{
     }
 })
 sendmsg.addEventListener('click', ()=>{
+    let name = 'انت'
     let msg = inputmsg.value
     inputmsg.value = ''
     if(msg == '') return
@@ -58,6 +60,17 @@ sendmsg.addEventListener('click', ()=>{
         socket.emit('newURL', {url: url})
         return
     }
+    let isYou = true
+    if(msg == '/srt'){
+        isYou = false
+        name = 'النظام'
+        if(client.subtitle){
+            msg = 'تم ايقاف الترجمة'
+        }else{
+            msg = 'تم تشغيل الترجمة'
+        }
+        socket.emit('subtitle')
+    }
     
     let now = new Date()
     const time = now.toLocaleTimeString('en-US', { 
@@ -68,11 +81,13 @@ sendmsg.addEventListener('click', ()=>{
 
     let nameR = ''
     let textR = ''
+    let fulltext = ''
     let timeR = ''
     if(client.reChat){
         const msgR = document.querySelector('.reMsg')
         nameR = msgR.querySelector('.name p').innerText
         textR = msgR.querySelector('.text').innerText
+        fulltext = textR
         timeR = msgR.querySelector('.time').innerText
 
         if(textR.length >=20){
@@ -83,31 +98,32 @@ sendmsg.addEventListener('click', ()=>{
 
     msglist.innerHTML += `
         <div class="msg">
-            ${(client.reChat)?
-                `<div class="msgReChat">
+            ${(client.reChat && isYou)?
+                `<div class="msgReChat" onclick="findmsg(this)">
                     <h4 class="name">
                         <p style="color: #4c016e;">${nameR}</p>
                         <span class="time">${timeR}</span>
                     </h4>
                     <p class="text">${textR}</p>
+                    <p class="fulltext">${fulltext}</p>
                 </div>`: ''
             }
             
             
             <div class="mainmsg">
                 <h2 class="name">
-                    <p>انت</p>
+                    <p>${name}</p>
                     <span class="time">${time}</span>
                 </h2>
                 <p class="text">${msg}</p>
-                <button class="reChat" onclick="reChatmsg(this)"><img src="/icons/reChat.png" alt="reChat"></button>
+                ${(isYou)? 
+                    `<button class="reChat" onclick="reChatmsg(this)"><img src="/icons/reChat.png" alt="reChat"></button>`
+                    : ''
+                }
             </div>
         </div>
     `
 
-    // if(client.reChat){
-
-    // }
 
 
     let lastmsg = msglist.lastElementChild
@@ -125,10 +141,12 @@ socket.on('sendmsg', (data)=>{
 
     let nameR = ''
     let textR = ''
+    let fulltext = ''
     let timeR = ''
     if(data.reChat){
         nameR = data.nameR
         textR = data.textR
+        fulltext = textR
         timeR = data.timeR
 
         if(textR.length >=20){
@@ -141,12 +159,13 @@ socket.on('sendmsg', (data)=>{
 
         <div class="msg leftmsg friendBg">
             ${(data.reChat)?
-                `<div class="msgReChat reChatfriend">
+                `<div class="msgReChat reChatfriend" onclick="findmsg(this)">
                     <h4 class="name">
                         <p style="color: #9c0000;">${nameR}</p>
                         <span class="time">${timeR}</span>
                     </h4>
                     <p class="text">${textR}</p>
+                    <p class="fulltext">${fulltext}</p>
                 </div>`: ''
             }
         
@@ -247,50 +266,59 @@ function canncel(){
 
 
 //subtitle
-const subBox = document.getElementById('subBox');
-
-
-let subtitles = [];
-
-// تحميل وقراءة الملف
-fetch(srtUrl)
-    // هنا السحر: نحول الملف إلى Blob وبعدين نقراه بترميز عربي صحيح
-    .then(response => response.blob())
-    .then(blob => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const srtContent = e.target.result;
-            
-            // تشغيل المكتبة لتفكيك الملف بعد ما انقره صح
-            subtitles = Subtitle.parse(srtContent);
-            console.log("الترجمة جاهزة ومفهومة:", subtitles);
-        };
-        
-        // جرب أول شي windows-1256 (هو الأغلب لملفات الـ SRT العربية)
-        reader.readAsText(blob, 'windows-1256'); 
-        
-        // 💡 ملاحظة: إذا جربت وطلعت بعده شخابيط، بس بدل 'windows-1256' الفوق وسويها 'utf-8'
-    })
-    .catch(err => console.error("خطأ في تحميل ملف الترجمة:", err));
-// تحديث الكلام وية مشي الفيديو
-video.addEventListener('timeupdate', () => {
-    // نحول وقت الفيديو الحالي إلى ملي ثانية
-    const currentTimeMs = video.currentTime * 1000;
-
-    // نبحث عن السطر المناسب للوقت الحالي (بالنسخة v2 الكائن يرجع كـ start و end مباشرة داخل الـ item)
-    const currentCue = subtitles.find(item => 
-        currentTimeMs >= item.start && 
-        currentTimeMs <= item.end
-    );
-
-    if (currentCue) {
-        subBox.innerHTML = currentCue.text;
-    } else {
-        subBox.innerHTML = "";
+socket.on('subtitle', ()=>{
+    if(!client.subtitle){
+        client.subtitle = true
+    }else{
+        client.subtitle = false
     }
-});
-//end subtitle
+if(client.subtitle){
+    const subBox = document.getElementById('subBox');
+    let subtitles = [];
+    // تحميل وقراءة الملف
+        if(!client.isLoadSubtitle){    
+            fetch(srtUrl)
+            // هنا السحر: نحول الملف إلى Blob وبعدين نقراه بترميز عربي صحيح
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const srtContent = e.target.result;
+                    
+                    // تشغيل المكتبة لتفكيك الملف بعد ما انقره صح
+                    subtitles = Subtitle.parse(srtContent);
+                    console.log("الترجمة جاهزة ومفهومة:", subtitles);
+                };
+                
+                // جرب أول شي windows-1256 (هو الأغلب لملفات الـ SRT العربية)
+                reader.readAsText(blob, 'windows-1256'); 
+                
+                // 💡 ملاحظة: إذا جربت وطلعت بعده شخابيط، بس بدل 'windows-1256' الفوق وسويها 'utf-8'
+            })
+            .catch(err => console.error("خطأ في تحميل ملف الترجمة:", err));
+            client.isLoadSubtitle = true
+        }    
+        // تحديث الكلام وية مشي الفيديو
+        video.addEventListener('timeupdate', () => {
+            // نحول وقت الفيديو الحالي إلى ملي ثانية
+            const currentTimeMs = video.currentTime * 1000;
 
+            // نبحث عن السطر المناسب للوقت الحالي (بالنسخة v2 الكائن يرجع كـ start و end مباشرة داخل الـ item)
+            const currentCue = subtitles.find(item => 
+                currentTimeMs >= item.start && 
+                currentTimeMs <= item.end
+            );
+
+            if (currentCue && client.subtitle) {
+                subBox.innerHTML = currentCue.text;
+            } else {
+                subBox.innerHTML = "";
+            }
+        });
+    }
+    
+})
+//end subtitle
 
 
 
@@ -312,6 +340,31 @@ function gettime(){
 }
 
 
+function findmsg(msgcliked){
+    let text = msgcliked.querySelector('.fulltext').innerText
+    console.log(text)
+    const msgs = msglist.querySelectorAll('.msg .mainmsg')
+
+    const targetMessage = Array.from(msgs).find(msg => {
+        const textNode = msg.querySelector('.text');
+        return textNode && textNode.innerText.includes(text);
+    });
+
+    if (targetMessage) {
+        targetMessage.scrollIntoView({ 
+            behavior: 'smooth', // الحركة تكون ناعمة وسلسة
+            block: 'center'     // يخلي الرسالة تجي بنص الشاشة بالضبط حتى تبين
+        });
+        
+        targetMessage.style.backgroundColor = '#ff9494a2'; 
+
+        
+        setTimeout(() => {
+            targetMessage.style.backgroundColor = ''; 
+        }, 2000);
+
+    }
+}
 
 
 

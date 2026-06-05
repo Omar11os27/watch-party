@@ -98,6 +98,8 @@ io.on('connection', (socket)=>{
         socket.broadcast.emit('pause')
     })
 
+    socket.on('subtitle',()=>{io.emit('subtitle')})
+
 
         //chat msg
     socket.on('sendmsg', (data)=>{
