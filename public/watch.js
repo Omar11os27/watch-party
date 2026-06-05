@@ -342,7 +342,6 @@ function gettime(){
 
 function findmsg(msgcliked){
     let text = msgcliked.querySelector('.fulltext').innerText
-    console.log(text)
     const msgs = msglist.querySelectorAll('.msg .mainmsg')
 
     const targetMessage = Array.from(msgs).find(msg => {
