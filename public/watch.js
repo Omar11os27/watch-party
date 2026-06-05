@@ -12,6 +12,8 @@ const async = document.querySelector('.async')
 const msglist = document.querySelector('.msglist')
 const inputmsg = document.querySelector('.inputmsg')
 const sendmsg = document.querySelector('.sendmsg')
+const reMsg = document.querySelector('.msgInput .reMsg')
+
 
 //startup
 video.src = defualturl
@@ -20,6 +22,7 @@ video.src = defualturl
 let client = {
     id: 0,
     master: false,
+    reChat: false,
 
 }
 
@@ -50,28 +53,111 @@ sendmsg.addEventListener('click', ()=>{
 
     if(msg == '/url'){
         let url = prompt('enter url: ')
+        console.log(url)
         video.src = url
         socket.emit('newURL', {url: url})
         return
     }
+    
+    let now = new Date()
+    const time = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+    });
+
+    let nameR = ''
+    let textR = ''
+    let timeR = ''
+    if(client.reChat){
+        const msgR = document.querySelector('.reMsg')
+        nameR = msgR.querySelector('.name p').innerText
+        textR = msgR.querySelector('.text').innerText
+        timeR = msgR.querySelector('.time').innerText
+
+        if(textR.length >=20){
+            textR = textR.slice(0,30)
+            textR += ` . . . `
+        }
+    }
 
     msglist.innerHTML += `
         <div class="msg">
-            <h2 class="name">انت</h2>
-            <p class="text">${msg}</p>
+            ${(client.reChat)?
+                `<div class="msgReChat">
+                    <h4 class="name">
+                        <p style="color: #4c016e;">${nameR}</p>
+                        <span class="time">${timeR}</span>
+                    </h4>
+                    <p class="text">${textR}</p>
+                </div>`: ''
+            }
+            
+            
+            <div class="mainmsg">
+                <h2 class="name">
+                    <p>انت</p>
+                    <span class="time">${time}</span>
+                </h2>
+                <p class="text">${msg}</p>
+                <button class="reChat" onclick="reChatmsg(this)"><img src="/icons/reChat.png" alt="reChat"></button>
+            </div>
         </div>
     `
+
+    // if(client.reChat){
+
+    // }
+
+
     let lastmsg = msglist.lastElementChild
     lastmsg.scrollIntoView({ behavior: 'smooth' });
-    socket.emit('sendmsg', {msg: msg})
+    reMsg.style.display = 'none'
+    socket.emit('sendmsg', {
+        msg: msg, time: time
+        ,nameR: nameR, timeR: timeR, textR: textR ,reChat: client.reChat
+    })
+    client.reChat = false
 })
 socket.on('sendmsg', (data)=>{
     let msg = data.msg
 
+
+    let nameR = ''
+    let textR = ''
+    let timeR = ''
+    if(data.reChat){
+        nameR = data.nameR
+        textR = data.textR
+        timeR = data.timeR
+
+        if(textR.length >=20){
+            textR = textR.slice(0,30)
+            textR += ` . . . `
+        }
+    }
+
     msglist.innerHTML += `
+
         <div class="msg leftmsg friendBg">
-            <h2 class="name friendname">صديقك</h2>
-            <p class="text">${msg}</p>
+            ${(data.reChat)?
+                `<div class="msgReChat reChatfriend">
+                    <h4 class="name">
+                        <p style="color: #9c0000;">${nameR}</p>
+                        <span class="time">${timeR}</span>
+                    </h4>
+                    <p class="text">${textR}</p>
+                </div>`: ''
+            }
+        
+            <div class="mainmsg">
+                <h2 class="name friendname">
+                    <p>صديقك</p>
+                    <span class="time">${data.time}</span>
+                </h2>
+                <p class="text">${msg}</p>
+                <button class="reChat" onclick="reChatmsg(this)"><img src="/icons/reChat.png" alt="reChat"></button>
+            </div>
         </div>
     `
     let lastmsg = msglist.lastElementChild
@@ -126,10 +212,39 @@ video.addEventListener('seeked', ()=>{
     socket.emit('howTimeAll')
 })
 
-// inputmsg.addEventListener('focus', ()=>{
-//     let div = document.querySelector('.msgInput')
-//     div.classList +='focus'
-// })
+
+//reChat
+function reChatmsg(btn){
+    const msg = btn.closest('.msg')
+    const name = msg.querySelector('.name p').innerText
+    let text = msg.querySelector('.text').innerText
+    const time = msg.querySelector('.time').innerText
+
+    if(text.length >=20){
+        text = text.slice(0,30)
+        text += ` . . . `
+    }
+
+    reMsg.innerHTML = `
+        <h2 class="name friendname">
+            <p>${name}</p>
+
+            <span class="time">${time}</span>
+        </h2>
+        <p class="text">${text}</p>
+        <button class="canncel" onclick="canncel()">X</button>
+    `
+    client.reChat = true
+    reMsg.style.display = 'flex'
+    inputmsg.focus();
+}
+
+function canncel(){
+    client.reChat = false
+    reMsg.style.display = 'none'
+}
+
+
 
 //subtitle
 const subBox = document.getElementById('subBox');

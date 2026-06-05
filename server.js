@@ -38,10 +38,10 @@ let global = {
     time: [],
     indexTime: 0,
 
-
 }
 
 let interval = null
+
 
 io.on('connection', (socket)=>{
 
@@ -101,8 +101,9 @@ io.on('connection', (socket)=>{
 
         //chat msg
     socket.on('sendmsg', (data)=>{
-        let msg = data.msg
-        socket.broadcast.emit('sendmsg', {msg: msg})
+        // let msg = data.msg
+        // let time = data.time
+        socket.broadcast.emit('sendmsg', data)
     })
         //'newURL'
     socket.on('newURL', (data)=>{

@@ -19,15 +19,37 @@
         <div class="chat">
             <div class="msglist">
                 <div class="msg">
-                    <h4 class="name" style="color: darkorange;">النظام</h4>
-                    <p class="text">يمكن المشاهدة مع الاصدقاء والدردشة</p>
+
+                    <div class="msgReChat">
+                        <h4 class="name">
+                            <p style="color: #4c016e;">النظام</p>
+                            <span class="time">1:37</span>
+                        </h4>
+                        <p class="text">يمكن المشاهدة مع الاصدقاء والدردشة</p>
+                    </div>
+
+                    <div class="mainmsg">
+                        <h4 class="name">
+                            <p style="color: darkorange;">النظام</p>
+                            <span class="time">1:37</span>
+                        </h4>
+                        <p class="text">
+                            يمكن المشاهدة مع الاصدقاء والدردشة
+                        </p>
+                        
+                        <button class="reChat" onclick="reChatmsg(this)"><img src="/icons/reChat.png" alt="reChat"></button>
+                    </div>
+                    
                 </div>
                 
             </div>
             <div class="msgInput">
                 <button class="sendmsg">></button>
-                <input class="inputmsg" type="text">
                 
+                <input class="inputmsg" type="text">
+                <div class="reMsg msg">
+                </div>
+               
                 <button class="master">master</button>
                 <button class="async">async</button>
             </div>
