@@ -140,16 +140,17 @@
     }
     .chat{
         position: absolute;
-        max-width: 45%;
-        right: 0;
-        top: 0;
-        height: 80dvh;
+        max-width: 55%;
+        left: 0;
+        top: 40%;
+        height: 60dvh;
     }
     .inputmsg:focus{
         position: absolute;
         top: 100%;
     }
     #subBox{
-        top: 100%;
+        top: 6%;
+        right: -80%;
     }
 }
