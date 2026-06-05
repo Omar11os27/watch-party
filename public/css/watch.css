@@ -66,6 +66,7 @@
 .inputmsg:focus{
     position: absolute;
     top: 40%;
+    background-color: rgba(70, 70, 70, 1);
 }
 
 .sendmsg{
