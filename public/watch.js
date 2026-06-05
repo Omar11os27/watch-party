@@ -215,7 +215,7 @@ video.addEventListener('seeked', ()=>{
 
 //reChat
 function reChatmsg(btn){
-    const msg = btn.closest('.msg')
+    const msg = btn.closest('.msg .mainmsg')
     const name = msg.querySelector('.name p').innerText
     let text = msg.querySelector('.text').innerText
     const time = msg.querySelector('.time').innerText
