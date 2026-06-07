@@ -87,13 +87,8 @@ sendmsg.addEventListener('click', ()=>{
         const msgR = document.querySelector('.reMsg')
         nameR = msgR.querySelector('.name p').innerText
         textR = msgR.querySelector('.text').innerText
-        fulltext = textR
+        fulltext = msgR.querySelector('.fulltext').innerText
         timeR = msgR.querySelector('.time').innerText
-
-        if(textR.length >=20){
-            textR = textR.slice(0,30)
-            textR += ` . . . `
-        }
     }
 
     msglist.innerHTML += `
@@ -128,12 +123,14 @@ sendmsg.addEventListener('click', ()=>{
 
     let lastmsg = msglist.lastElementChild
     lastmsg.scrollIntoView({ behavior: 'smooth' });
-    reMsg.style.display = 'none'
+    
     socket.emit('sendmsg', {
         msg: msg, time: time
-        ,nameR: nameR, timeR: timeR, textR: textR ,reChat: client.reChat
+        ,nameR: nameR, timeR: timeR, textR: textR ,fulltext: fulltext
+        ,reChat: client.reChat
     })
-    client.reChat = false
+
+    canncel()
 })
 socket.on('sendmsg', (data)=>{
     let msg = data.msg
@@ -146,13 +143,8 @@ socket.on('sendmsg', (data)=>{
     if(data.reChat){
         nameR = data.nameR
         textR = data.textR
-        fulltext = textR
+        fulltext = data.fulltext
         timeR = data.timeR
-
-        if(textR.length >=20){
-            textR = textR.slice(0,30)
-            textR += ` . . . `
-        }
     }
 
     msglist.innerHTML += `
@@ -237,6 +229,8 @@ function reChatmsg(btn){
     const msg = btn.closest('.msg .mainmsg')
     const name = msg.querySelector('.name p').innerText
     let text = msg.querySelector('.text').innerText
+    let fulltext = text
+    console.log('rechat fulltext', fulltext)
     const time = msg.querySelector('.time').innerText
 
     if(text.length >=20){
@@ -251,6 +245,8 @@ function reChatmsg(btn){
             <span class="time">${time}</span>
         </h2>
         <p class="text">${text}</p>
+        <p class="fulltext">${fulltext}</p>
+
         <button class="canncel" onclick="canncel()">X</button>
     `
     client.reChat = true
@@ -260,6 +256,7 @@ function reChatmsg(btn){
 
 function canncel(){
     client.reChat = false
+    reMsg.innerHTML = ''
     reMsg.style.display = 'none'
 }
 
@@ -346,7 +343,7 @@ function findmsg(msgcliked){
 
     const targetMessage = Array.from(msgs).find(msg => {
         const textNode = msg.querySelector('.text');
-        return textNode && textNode.innerText.includes(text);
+        return textNode && textNode.innerText.includes(text) && text!='';
     });
 
     if (targetMessage) {
@@ -362,6 +359,8 @@ function findmsg(msgcliked){
             targetMessage.style.backgroundColor = ''; 
         }, 2000);
 
+    }else{
+        console.log('not found msg\n fulltext is empty')
     }
 }
 
