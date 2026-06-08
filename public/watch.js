@@ -1,4 +1,4 @@
-const srtUrl = "/subtitles/distant.srt";
+const srtUrl = "/subtitles/From (2022) - S01E01 - eng-ar.srt";
 
 // window.location.href = `name page`
 // const socket = io('https://watch-party-v2gx.onrender.com')
