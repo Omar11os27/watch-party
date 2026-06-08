@@ -1,4 +1,4 @@
-const srtUrl = "/subtitles/From (2022) - S01E01 - eng-ar.srt";
+const srtUrl = "/subtitles/From.S01E02.The.Way.Things.Are.Now.720p-ar.srt";
 
 // window.location.href = `name page`
 // const socket = io('https://watch-party-v2gx.onrender.com')
